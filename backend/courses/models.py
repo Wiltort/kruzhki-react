@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+import datetime
+
 
 
 User = get_user_model()
@@ -65,7 +67,6 @@ class Schedule(models.Model):
         SATURDAY = 5, 'Суббота'
         SUNDAY = 6, 'Воскресенье'
 
-    import datetime
     group = models.ForeignKey(Stud_Group, related_name='schedule',
                               on_delete=models.PROTECT)
     day_of_week = models.SmallIntegerField(choices=Days.choices)

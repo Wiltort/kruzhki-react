@@ -22,10 +22,9 @@ from rest_framework.authtoken import views
 
 
 urlpatterns = [
-    path('', include('courses.urls')),
     path('admin/', admin.site.urls),
-    path('api/v1/', include('users.urls')),
-    #path('')
+    path('api/', include('users.urls')),
+    path('api/', include('courses.urls')),
 ]
 
 if settings.DEBUG:
@@ -33,10 +32,10 @@ if settings.DEBUG:
                           document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, 
                           document_root=settings.STATIC_ROOT)
-    import debug_toolbar
-    
+    #import debug_toolbar
+    '''
     urlpatterns += (path("__debug__/", include(debug_toolbar.urls)),)
-
+'''
 urlpatterns += [
     path('api-token-auth/', views.obtain_auth_token)
 ]
