@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import api from '../api'
 
-export default function useRecipe () {
-  const [ recipe, setRecipe ] = useState({})
+export default function useGroup () {
+  const [ Group, setGroup ] = useState({})
 
   const handleLike = ({ id, toLike = 1 }) => {
     const method = toLike ? api.addToFavorites.bind(api) : api.removeFromFavorites.bind(api)
     method({ id }).then(res => {
-      const recipeUpdated = { ...recipe, is_favorited: Number(toLike) }
-      setRecipe(recipeUpdated)
+      const GroupUpdated = { ...Group, is_favorited: Number(toLike) }
+      setGroup(GroupUpdated)
     })
     .catch(err => {
       const { errors } = err
@@ -21,8 +21,8 @@ export default function useRecipe () {
   const handleAddToCart = ({ id, toAdd = 1, callback }) => {
     const method = toAdd ? api.addToOrders.bind(api) : api.removeFromOrders.bind(api)
     method({ id }).then(res => {
-      const recipeUpdated = { ...recipe, is_in_shopping_cart: Number(toAdd) }
-      setRecipe(recipeUpdated)
+      const GroupUpdated = { ...Group, is_in_shopping_cart: Number(toAdd) }
+      setGroup(GroupUpdated)
       callback && callback(toAdd)
     })
     .catch(err => {
@@ -39,8 +39,8 @@ export default function useRecipe () {
         author_id
       })
       .then(_ => {
-        const recipeUpdated = { ...recipe, author: { ...recipe.author, is_subscribed: toSubscribe } }
-        setRecipe(recipeUpdated)
+        const GroupUpdated = { ...Group, author: { ...Group.author, is_subscribed: toSubscribe } }
+        setGroup(GroupUpdated)
       })
       .catch(err => {
         const { errors } = err
@@ -51,8 +51,8 @@ export default function useRecipe () {
   }
 
   return {
-    recipe,
-    setRecipe,
+    Group,
+    setGroup,
     handleLike,
     handleAddToCart,
     handleSubscribe

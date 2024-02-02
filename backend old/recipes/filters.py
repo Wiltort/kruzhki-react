@@ -1,6 +1,6 @@
 from django_filters.rest_framework import FilterSet, filters
 
-from recipes.models import Ingredient, Recipe
+from Groups.models import Ingredient, Group
 from tags.models import Tag
 from users.models import User
 
@@ -26,7 +26,7 @@ class TagFilter(FilterSet):
     )
 
     class Meta:
-        model = Recipe
+        model = Group
         fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
 
     def get_is_favorited(self, queryset, name, value):

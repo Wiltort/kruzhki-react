@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { useTags } from './index.js'
-import api from '../api'
+import api from '../api/index.js'
 
-export default function useRecipes () {
-  const [ recipes, setRecipes ] = useState([])
-  const [ recipesCount, setRecipesCount ] = useState(0)
-  const [ recipesPage, setRecipesPage ] = useState(1)
+export default function useGroups () {
+  const [ Groups, setGroups ] = useState([])
+  const [ GroupsCount, setGroupsCount ] = useState(0)
+  const [ GroupsPage, setGroupsPage ] = useState(1)
   const { value: tagsValue, handleChange: handleTagsChange, setValue: setTagsValue } = useTags()
 
   const handleLike = ({ id, toLike = true }) => {
     const method = toLike ? api.addToFavorites.bind(api) : api.removeFromFavorites.bind(api)
     method({ id }).then(res => {
-      const recipesUpdated = recipes.map(recipe => {
-        if (recipe.id === id) {
-          recipe.is_favorited = toLike
+      const GroupsUpdated = Groups.map(Group => {
+        if (Group.id === id) {
+          Group.is_favorited = toLike
         }
-        return recipe
+        return Group
       })
-      setRecipes(recipesUpdated)
+      setGroups(GroupsUpdated)
     })
     .catch(err => {
       const { errors } = err
@@ -30,13 +30,13 @@ export default function useRecipes () {
   const handleAddToCart = ({ id, toAdd = true, callback }) => {
     const method = toAdd ? api.addToOrders.bind(api) : api.removeFromOrders.bind(api)
     method({ id }).then(res => {
-      const recipesUpdated = recipes.map(recipe => {
-        if (recipe.id === id) {
-          recipe.is_in_shopping_cart = toAdd
+      const GroupsUpdated = Groups.map(Group => {
+        if (Group.id === id) {
+          Group.is_in_shopping_cart = toAdd
         }
-        return recipe
+        return Group
       })
-      setRecipes(recipesUpdated)
+      setGroups(GroupsUpdated)
       callback && callback(toAdd)
     })
     .catch(err => {
@@ -48,12 +48,12 @@ export default function useRecipes () {
   }
 
   return {
-    recipes,
-    setRecipes,
-    recipesCount,
-    setRecipesCount,
-    recipesPage,
-    setRecipesPage,
+    Groups,
+    setGroups,
+    GroupsCount,
+    setGroupsCount,
+    GroupsPage,
+    setGroupsPage,
     tagsValue,
     handleLike,
     handleAddToCart,

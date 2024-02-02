@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('recipes', '0004_auto_20220326_1440'),
+        ('Groups', '0004_auto_20220326_1440'),
     ]
 
     operations = [
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='ShoppingCart',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('recipe', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users_shopping_cart', to='recipes.recipe', verbose_name='Всписке у пользователей')),
+                ('Group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users_shopping_cart', to='Groups.Group', verbose_name='Всписке у пользователей')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='in_shopping_cart', to=settings.AUTH_USER_MODEL, verbose_name='Список покупок')),
             ],
             options={

@@ -9,14 +9,14 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('recipes', '0006_alter_shoppingcart_recipe'),
+        ('Groups', '0006_alter_shoppingcart_Group'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='shoppingcart',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='shopping_carts', to='recipes.recipe', verbose_name='В списке у пользователей'),
+            name='Group',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='shopping_carts', to='Groups.Group', verbose_name='В списке у пользователей'),
         ),
         migrations.AlterField(
             model_name='shoppingcart',

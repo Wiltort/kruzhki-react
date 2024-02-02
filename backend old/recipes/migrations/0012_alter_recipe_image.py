@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0011_ingredientsinrecipe_unique_ingredient'),
+        ('Groups', '0011_ingredientsinGroup_unique_ingredient'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='image',
-            field=models.ImageField(upload_to='backend_media/recipes/', verbose_name='Изображение'),
+            field=models.ImageField(upload_to='backend_media/Groups/', verbose_name='Изображение'),
         ),
     ]

@@ -8,33 +8,33 @@ import cn from 'classnames'
 import { useRouteMatch, useParams, useHistory } from 'react-router-dom'
 import MetaTags from 'react-meta-tags'
 
-import { useRecipe } from '../../utils/index.js'
+import { useGroup } from '../../utils/index.js'
 import api from '../../api'
 
 const SingleCard = ({ loadItem, updateOrders }) => {
   const [ loading, setLoading ] = useState(true)
   const {
-    recipe,
-    setRecipe,
+    Group,
+    setGroup,
     handleLike,
     handleAddToCart,
     handleSubscribe
-  } = useRecipe()
+  } = useGroup()
   const authContext = useContext(AuthContext)
   const userContext = useContext(UserContext)
   const { id } = useParams()
   const history = useHistory()
 
   useEffect(_ => {
-    api.getRecipe ({
-        recipe_id: id
+    api.getGroup ({
+        Group_id: id
       })
       .then(res => {
-        setRecipe(res)
+        setGroup(res)
         setLoading(false)
       })
       .catch(err => {
-        history.push('/recipes')
+        history.push('/Groups')
       })
   }, [])
   
@@ -49,7 +49,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
     text,
     is_favorited,
     is_in_shopping_cart
-  } = recipe
+  } = Group
   
   return <Main>
     <Container>

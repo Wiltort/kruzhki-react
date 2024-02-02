@@ -32,7 +32,7 @@ class RubricViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Stud_Group.objects.all()
     serializer_class = Stud_GroupSerializer
-    permission_classes = [IsAuthenticated, IsAdminOrAllowedTeacher]
+    permission_classes = [IsAuthenticatedOrReadOnly,]
     pagination_class = PageNumberPagination
 
 

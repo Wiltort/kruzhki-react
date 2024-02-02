@@ -109,7 +109,7 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
         - Теги
-  /api/recipes/:
+  /api/Groups/:
     get:
       operationId: Список рецептов
       description: Страница доступна всем пользователям. Доступна фильтрация по избранному, автору, списку покупок и тегам.
@@ -171,18 +171,18 @@ paths:
                     type: string
                     nullable: true
                     format: uri
-                    example: http://foodgram.example.org/api/recipes/?page=4
+                    example: http://foodgram.example.org/api/Groups/?page=4
                     description: 'Ссылка на следующую страницу'
                   previous:
                     type: string
                     nullable: true
                     format: uri
-                    example: http://foodgram.example.org/api/recipes/?page=2
+                    example: http://foodgram.example.org/api/Groups/?page=2
                     description: 'Ссылка на предыдущую страницу'
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/RecipeList'
+                      $ref: '#/components/schemas/GroupList'
                     description: 'Список объектов текущей страницы'
           description: ''
       tags:
@@ -197,13 +197,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RecipeCreateUpdate'
+              $ref: '#/components/schemas/GroupCreateUpdate'
       responses:
         '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RecipeList'
+                $ref: '#/components/schemas/GroupList'
           description: 'Рецепт успешно создан'
         '400':
           description: 'Ошибки валидации в стандартном формате DRF'
@@ -217,7 +217,7 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
         - Рецепты
-  /api/recipes/download_shopping_cart/:
+  /api/Groups/download_shopping_cart/:
     get:
       security:
         - Token: [ ]
@@ -240,7 +240,7 @@ paths:
           $ref: '#/components/responses/AuthenticationError'
       tags:
         - Список покупок
-  /api/recipes/{id}/:
+  /api/Groups/{id}/:
     get:
       operationId: Получение рецепта
       description: ''
@@ -256,7 +256,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RecipeList'
+                $ref: '#/components/schemas/GroupList'
           description: ''
       tags:
         - Рецепты
@@ -276,13 +276,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RecipeCreateUpdate'
+              $ref: '#/components/schemas/GroupCreateUpdate'
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RecipeList'
+                $ref: '#/components/schemas/GroupList'
           description: 'Рецепт успешно обновлен'
         '400':
           $ref: '#/components/responses/NestedValidationError'
@@ -318,7 +318,7 @@ paths:
           $ref: '#/components/responses/NotFound'
       tags:
         - Рецепты
-  /api/recipes/{id}/favorite/:
+  /api/Groups/{id}/favorite/:
     post:
       operationId: Добавить рецепт в избранное
       description: 'Доступно только авторизованному пользователю.'
@@ -336,7 +336,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RecipeMinified'
+                $ref: '#/components/schemas/GroupMinified'
           description: 'Рецепт успешно добавлен в избранное'
         '400':
           description: 'Ошибка добавления в избранное (Например, когда рецепт уже есть в избранном)'
@@ -374,7 +374,7 @@ paths:
           $ref: '#/components/responses/AuthenticationError'
       tags:
         - Избранное
-  /api/recipes/{id}/shopping_cart/:
+  /api/Groups/{id}/shopping_cart/:
     post:
       operationId: Добавить рецепт в список покупок
       description: 'Доступно только авторизованным пользователям'
@@ -392,7 +392,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RecipeMinified'
+                $ref: '#/components/schemas/GroupMinified'
           description: 'Рецепт успешно добавлен в список покупок'
         '400':
           description: 'Ошибка добавления в список покупок (Например, когда рецепт уже есть в списке покупок)'
@@ -490,10 +490,10 @@ paths:
           description: Количество объектов на странице.
           schema:
             type: integer
-        - name: recipes_limit
+        - name: Groups_limit
           required: false
           in: query
-          description: Количество объектов внутри поля recipes.
+          description: Количество объектов внутри поля Groups.
           schema:
             type: integer
       responses:
@@ -522,7 +522,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserWithRecipes'
+                      $ref: '#/components/schemas/UserWithGroups'
                     description: 'Список объектов текущей страницы'
           description: ''
         '401':
@@ -542,10 +542,10 @@ paths:
           description: "Уникальный идентификатор этого пользователя."
           schema:
             type: string
-        - name: recipes_limit
+        - name: Groups_limit
           required: false
           in: query
-          description: Количество объектов внутри поля recipes.
+          description: Количество объектов внутри поля Groups.
           schema:
             type: integer
       responses:
@@ -553,7 +553,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserWithRecipes'
+                $ref: '#/components/schemas/UserWithGroups'
           description: 'Подписка успешно создана'
         '400':
           description: 'Ошибка подписки (Например, если уже подписан или при подписке на себя самого)'
@@ -731,7 +731,7 @@ components:
           example: false
       required:
         - username
-    UserWithRecipes:
+    UserWithGroups:
       description: 'Расширенный объект пользователя с рецептами'
       type: object
       properties:
@@ -762,11 +762,11 @@ components:
           type: boolean
           readOnly: true
           description: "Подписан ли текущий пользователь на этого"
-        recipes:
+        Groups:
           type: array
           items:
-            $ref: '#/components/schemas/RecipeMinified'
-        recipes_count:
+            $ref: '#/components/schemas/GroupMinified'
+        Groups_count:
           type: integer
           description: 'Общее количество рецептов пользователя'
 
@@ -794,7 +794,7 @@ components:
           pattern: ^[-a-zA-Z0-9_]+$
           description: 'Уникальный слаг'
           example: 'breakfast'
-    RecipeList:
+    GroupList:
       type: object
       properties:
         id:
@@ -812,7 +812,7 @@ components:
           description: 'Список ингредиентов'
           type: array
           items:
-            $ref: '#/components/schemas/IngredientInRecipe'
+            $ref: '#/components/schemas/IngredientInGroup'
         is_favorited:
           type: boolean
           description: 'Находится ли в избранном'
@@ -825,7 +825,7 @@ components:
           description: 'Название'
         image:
           description: 'Ссылка на картинку на сайте'
-          example: 'http://foodgram.example.org/media/recipes/images/image.jpeg'
+          example: 'http://foodgram.example.org/media/Groups/images/image.jpeg'
           type: string
           format: url
         text:
@@ -844,7 +844,7 @@ components:
         - image
         - text
         - cooking_time
-    RecipeMinified:
+    GroupMinified:
       type: object
       properties:
         id:
@@ -857,7 +857,7 @@ components:
           description: 'Название'
         image:
           description: 'Ссылка на картинку на сайте'
-          example: 'http://foodgram.example.org/media/recipes/images/image.jpeg'
+          example: 'http://foodgram.example.org/media/Groups/images/image.jpeg'
           type: string
           format: url
         cooking_time:
@@ -881,7 +881,7 @@ components:
       required:
         - name
         - measurement_unit
-    IngredientInRecipe:
+    IngredientInGroup:
       type: object
       properties:
         id:
@@ -1048,7 +1048,7 @@ components:
       properties:
         auth_token:
           type: string
-    RecipeCreateUpdate:
+    GroupCreateUpdate:
       type: object
       properties:
         id:

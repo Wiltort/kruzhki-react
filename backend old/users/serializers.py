@@ -1,8 +1,8 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-import recipes
-from recipes.models import Recipe
+import Groups
+from Groups.models import Group
 from users.models import Subscription, User
 
 
@@ -69,9 +69,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField(
         method_name='get_is_subscribed'
     )
-    recipes = serializers.SerializerMethodField(method_name='get_recipes')
-    recipes_count = serializers.SerializerMethodField(
-        method_name='get_recipes_count'
+    Groups = serializers.SerializerMethodField(method_name='get_Groups')
+    Groups_count = serializers.SerializerMethodField(
+        method_name='get_Groups_count'
     )
 
     class Meta:
@@ -83,8 +83,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
-            'recipes',
-            'recipes_count'
+            'Groups',
+            'Groups_count'
         )
 
     def get_is_subscribed(self, obj):
@@ -93,19 +93,19 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             author=obj.author, user=request.user
         ).exists()
 
-    def get_recipes(self, obj):
+    def get_Groups(self, obj):
         request = self.context.get('request')
-        if request.GET.get('recipe_limit'):
-            recipe_limit = int(request.GET.get('recipe_limit'))
-            queryset = Recipe.objects.filter(
-                author=obj.author)[:recipe_limit]
+        if request.GET.get('Group_limit'):
+            Group_limit = int(request.GET.get('Group_limit'))
+            queryset = Group.objects.filter(
+                author=obj.author)[:Group_limit]
         else:
-            queryset = Recipe.objects.filter(
+            queryset = Group.objects.filter(
                 author=obj.author)
-        serializer = recipes.serializers.ShortRecipeSerializer(
+        serializer = Groups.serializers.ShortGroupSerializer(
             queryset, read_only=True, many=True
         )
         return serializer.data
 
-    def get_recipes_count(self, obj):
-        return obj.author.recipes.count()
+    def get_Groups_count(self, obj):
+        return obj.author.Groups.count()

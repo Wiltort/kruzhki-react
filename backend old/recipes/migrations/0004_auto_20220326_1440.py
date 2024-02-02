@@ -9,25 +9,25 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('recipes', '0003_auto_20220325_1209'),
+        ('Groups', '0003_auto_20220325_1209'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ingredientsinrecipe',
+            model_name='ingredientsinGroup',
             name='ingredient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredients_list', to='recipes.ingredient', verbose_name='Рецепты'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredients_list', to='Groups.ingredient', verbose_name='Рецепты'),
         ),
         migrations.AlterField(
-            model_name='ingredientsinrecipe',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredient_in_recipe', to='recipes.recipe', verbose_name='Ингредиенты'),
+            model_name='ingredientsinGroup',
+            name='Group',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredient_in_Group', to='Groups.Group', verbose_name='Ингредиенты'),
         ),
         migrations.CreateModel(
             name='Favorite',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('recipe', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users_favourites', to='recipes.recipe', verbose_name='Избранные у пользователей')),
+                ('Group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users_favourites', to='Groups.Group', verbose_name='Избранные у пользователей')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='favorites', to=settings.AUTH_USER_MODEL, verbose_name='Избранные рецепты')),
             ],
             options={

@@ -13,7 +13,7 @@
   padding: 31px 26px 17px;
 }
 
-.subscriptionRecipeLink {
+.subscriptionGroupLink {
   color: #000;
   text-decoration: none;
 }
@@ -77,7 +77,7 @@
     color: #4A61DD;
 }
 
-.subscriptionRecipe {
+.subscriptionGroup {
     display: grid;
     position: relative;
     grid-template-areas: 'title image'
@@ -86,7 +86,7 @@
     column-gap: 50px;
 }
 
-.subscriptionRecipe {
+.subscriptionGroup {
     display: grid;
     position: relative;
     grid-template-areas: 'title image'
@@ -95,7 +95,7 @@
     column-gap: 50px;
 }
 
-.subscriptionRecipeTitle {
+.subscriptionGroupTitle {
     font-family: 'Montserrat', sans-serif;
     font-style: normal;
     font-weight: 500;
@@ -107,7 +107,7 @@
     grid-area: title;
 }
 
-.subscriptionRecipeImage {
+.subscriptionGroupImage {
     width: 72px;
     height: 72px;
     grid-area: image;
@@ -115,7 +115,7 @@
     object-fit: cover;
 }
 
-.subscriptionRecipeText {
+.subscriptionGroupText {
     font-family: 'Montserrat', sans-serif;
     font-style: normal;
     font-weight: normal;
@@ -130,11 +130,11 @@
     margin: 0 0 28px;
 }
 
-.subscriptionRecipeText svg {
+.subscriptionGroupText svg {
   margin-right: 10px;
 }
 
-.subscriptionRecipeText:last-child {
+.subscriptionGroupText:last-child {
     margin-bottom: 0;
 }
 

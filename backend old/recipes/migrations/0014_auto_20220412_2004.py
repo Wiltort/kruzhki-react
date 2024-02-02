@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0013_auto_20220410_1920'),
+        ('Groups', '0013_auto_20220410_1920'),
     ]
 
     operations = [
@@ -22,13 +22,13 @@ class Migration(migrations.Migration):
             field=models.CharField(db_index=True, help_text='Введите название ингредиента', max_length=255, verbose_name='Название'),
         ),
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='image',
-            field=models.ImageField(help_text='Загрузите изображение блюда', upload_to='recipes/', verbose_name='Изображение'),
+            field=models.ImageField(help_text='Загрузите изображение блюда', upload_to='Groups/', verbose_name='Изображение'),
         ),
         migrations.AlterField(
             model_name='shoppingcart',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='carts', to='recipes.recipe', verbose_name='В списке у пользователей'),
+            name='Group',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='carts', to='Groups.Group', verbose_name='В списке у пользователей'),
         ),
     ]

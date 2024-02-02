@@ -1,32 +1,32 @@
 import { PurchaseList, Title, Container, Main, Button } from '../../components'
 import styles from './styles.module.css'
-import { useRecipes } from '../../utils/index.js'
+import { useGroups } from '../../utils/index.js'
 import { useEffect, useState } from 'react'
 import api from '../../api'
 import MetaTags from 'react-meta-tags'
 
 const Cart = ({ updateOrders, orders }) => {
   const {
-    recipes,
-    setRecipes,
+    groups,
+    setGroups,
     handleAddToCart
-  } = useRecipes()
+  } = useGroups()
   
-  const getRecipes = () => {
+  const getGroups = () => {
     api
-      .getRecipes({
+      .getGroups({
         page: 1,
         limit: 999,
-        is_in_shopping_cart: Number(true)
+        //is_in_shopping_cart: Number(true)
       })
       .then(res => {
         const { results } = res
-        setRecipes(results)
+        setGroups(results)
       })
   }
 
   useEffect(_ => {
-    getRecipes()
+    getGroups()
   }, [])
 
   const downloadDocument = () => {
@@ -43,7 +43,7 @@ const Cart = ({ updateOrders, orders }) => {
       <div className={styles.cart}>
         <Title title='Список покупок' />
         <PurchaseList
-          orders={recipes}
+          orders={Groups}
           handleRemoveFromCart={handleAddToCart}
           updateOrders={updateOrders}
         />

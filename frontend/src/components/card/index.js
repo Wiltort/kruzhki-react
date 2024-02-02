@@ -5,34 +5,37 @@ import { AuthContext } from '../../contexts'
 
 const Card = ({
   name = 'Без названия',
+  title,
   id,
   image,
-  is_favorited,
-  is_in_shopping_cart,
-  tags,
-  cooking_time,
-  author = {},
-  handleLike,
-  handleAddToCart,
-  updateOrders
+  //is_favorited,
+  //is_in_shopping_cart,
+  //tags,
+  //cooking_time,
+  teacher = {},
+  //handleLike,
+  //handleAddToCart,
+  //updateOrders
+  description,
+  //rubric
 }) => {
   const authContext = useContext(AuthContext)
   return <div className={styles.card}>
       <LinkComponent
         className={styles.card__title}
-        href={`/recipes/${id}`}
+        href={`/groups/${id}`}
         title={<div className={styles.card__image} style={{ backgroundImage: `url(${ image })` }} />}
       />
       <div className={styles.card__body}>
         <LinkComponent
           className={styles.card__title}
-          href={`/recipes/${id}`}
+          href={`/groups/${id}`}
           title={name}
         />
-        <TagsContainer tags={tags} />
+        {/*<TagsContainer tags={tags} />
         <div className={styles.card__time}>
           <Icons.ClockIcon /> {cooking_time} мин.
-        </div>
+</div>
         <div className={styles.card__author}>
           <Icons.UserIcon /> <LinkComponent
             href={`/user/${author.id}`}
@@ -65,8 +68,8 @@ const Card = ({
             }}
           >
             {is_favorited ? <Icons.StarActiveIcon /> : <Icons.StarIcon />}
-          </Button>}
-      </div>
+          </Button>}*/}
+          </div>
   </div>
 }
 

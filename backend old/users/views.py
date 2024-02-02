@@ -4,7 +4,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.pagination import CustomPagination
+from Groups.pagination import CustomPagination
 from users.models import Subscription, User
 from users.serializers import SubscribeSerializer, SubscriptionSerializer
 

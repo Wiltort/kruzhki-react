@@ -11,12 +11,12 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('tags', '0001_initial'),
-        ('recipes', '0001_initial'),
+        ('Groups', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='IngredientsInRecipe',
+            name='IngredientsInGroup',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('amount', models.PositiveSmallIntegerField(verbose_name='Количество')),
@@ -32,17 +32,17 @@ class Migration(migrations.Migration):
             field=models.CharField(db_index=True, max_length=255, verbose_name='Название'),
         ),
         migrations.CreateModel(
-            name='Recipe',
+            name='Group',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=200, verbose_name='Название')),
-                ('image', models.ImageField(upload_to='media/recipes/', verbose_name='Изображение')),
+                ('image', models.ImageField(upload_to='media/Groups/', verbose_name='Изображение')),
                 ('text', models.TextField(verbose_name='Описание')),
                 ('cooking_time', models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(1, 'Минимальное время: 1 минута')], verbose_name='Время приготовления')),
                 ('pub_date', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата публикации')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='recipes', to=settings.AUTH_USER_MODEL, verbose_name='Автор рецепта')),
-                ('ingredients', models.ManyToManyField(through='recipes.IngredientsInRecipe', to='recipes.Ingredient', verbose_name='Ингредиенты')),
-                ('tags', models.ManyToManyField(db_index=True, related_name='recipes', to='tags.Tag', verbose_name='Теги')),
+                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Groups', to=settings.AUTH_USER_MODEL, verbose_name='Автор рецепта')),
+                ('ingredients', models.ManyToManyField(through='Groups.IngredientsInGroup', to='Groups.Ingredient', verbose_name='Ингредиенты')),
+                ('tags', models.ManyToManyField(db_index=True, related_name='Groups', to='tags.Tag', verbose_name='Теги')),
             ],
             options={
                 'verbose_name': 'Рецепт',
@@ -50,13 +50,13 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='ingredientsinrecipe',
+            model_name='ingredientsinGroup',
             name='ingredient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='recipe_ingredient', to='recipes.ingredient'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Group_ingredient', to='Groups.ingredient'),
         ),
         migrations.AddField(
-            model_name='ingredientsinrecipe',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='recipes.recipe'),
+            model_name='ingredientsinGroup',
+            name='Group',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='Groups.Group'),
         ),
     ]

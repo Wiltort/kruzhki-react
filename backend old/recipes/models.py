@@ -27,7 +27,7 @@ class Ingredient(models.Model):
         return self.name
 
 
-class Recipe(models.Model):
+class Group(models.Model):
     name = models.CharField(
         max_length=200,
         verbose_name='Название',
@@ -36,12 +36,12 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='recipes',
+        related_name='Groups',
         verbose_name='Автор рецепта',
         help_text='Введите автора'
     )
     image = models.ImageField(
-        upload_to='recipes/',
+        upload_to='Groups/',
         verbose_name='Изображение',
         help_text='Загрузите изображение блюда'
     )
@@ -52,14 +52,14 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
         db_index=True,
-        related_name='recipes',
+        related_name='Groups',
         verbose_name='Теги',
         help_text='Выберите теги'
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='IngredientsInRecipe',
-        through_fields=('recipe', 'ingredient'),
+        through='IngredientsInGroup',
+        through_fields=('Group', 'ingredient'),
         verbose_name='Ингредиенты',
         help_text='Выберите ингредиенты'
     )
@@ -88,11 +88,11 @@ class Recipe(models.Model):
         return self.name
 
 
-class IngredientsInRecipe(models.Model):
-    recipe = models.ForeignKey(
-        Recipe,
+class IngredientsInGroup(models.Model):
+    Group = models.ForeignKey(
+        Group,
         on_delete=models.CASCADE,
-        related_name='ingredient_in_recipe',
+        related_name='ingredient_in_Group',
         verbose_name='Ингредиенты'
     )
     ingredient = models.ForeignKey(
@@ -106,7 +106,7 @@ class IngredientsInRecipe(models.Model):
     class Meta:
         constraints = (
             models.UniqueConstraint(
-                fields=('ingredient', 'recipe'),
+                fields=('ingredient', 'Group'),
                 name='unique_ingredient'
             ),
         )
@@ -114,7 +114,7 @@ class IngredientsInRecipe(models.Model):
         verbose_name_plural = 'Ингредиенты рецептов'
 
     def __str__(self):
-        return f'{self.recipe} - {self.ingredient}'
+        return f'{self.Group} - {self.ingredient}'
 
 
 class Favorite(models.Model):
@@ -125,8 +125,8 @@ class Favorite(models.Model):
         verbose_name='Избранные рецепты',
         help_text='Избранные рецепты пользователя'
     )
-    recipe = models.ForeignKey(
-        Recipe,
+    Group = models.ForeignKey(
+        Group,
         on_delete=models.CASCADE,
         related_name='users_favorites',
         verbose_name='Избранные у пользователей',
@@ -136,7 +136,7 @@ class Favorite(models.Model):
     class Meta:
         constraints = (
             models.UniqueConstraint(
-                fields=('user', 'recipe'),
+                fields=('user', 'Group'),
                 name='unique_favorite'
             ),
         )
@@ -144,7 +144,7 @@ class Favorite(models.Model):
         verbose_name_plural = 'Избранное'
 
     def __str__(self):
-        return f'{self.user} added {self.recipe} to favorite'
+        return f'{self.user} added {self.Group} to favorite'
 
 
 class ShoppingCart(models.Model):
@@ -155,8 +155,8 @@ class ShoppingCart(models.Model):
         verbose_name='Список покупок',
         help_text='Список покупок пользователя'
     )
-    recipe = models.ForeignKey(
-        Recipe,
+    Group = models.ForeignKey(
+        Group,
         on_delete=models.CASCADE,
         related_name='shopping_cart',
         verbose_name='В списке у пользователей'
@@ -165,12 +165,12 @@ class ShoppingCart(models.Model):
     class Meta:
         constraints = (
             models.UniqueConstraint(
-                fields=('user', 'recipe'),
-                name='unique_recipe'
+                fields=('user', 'Group'),
+                name='unique_Group'
             ),
         )
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
 
     def __str__(self):
-        return f'{self.user} added {self.recipe} in shopping cart'
+        return f'{self.user} added {self.Group} in shopping cart'

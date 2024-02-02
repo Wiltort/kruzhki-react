@@ -1,39 +1,39 @@
 import { Card, Title, Pagination, CardList, Container, Main, CheckboxGroup  } from '../../components'
 import styles from './styles.module.css'
-import { useRecipes } from '../../utils/index.js'
+import { useGroups } from '../../utils/index.js'
 import { useEffect } from 'react'
 import api from '../../api'
 import MetaTags from 'react-meta-tags'
 
 const HomePage = ({ updateOrders }) => {
   const {
-    recipes,
-    setRecipes,
-    recipesCount,
-    setRecipesCount,
-    recipesPage,
-    setRecipesPage,
+    Groups,
+    setGroups,
+    GroupsCount,
+    setGroupsCount,
+    GroupsPage,
+    setGroupsPage,
     tagsValue,
     setTagsValue,
     handleTagsChange,
     handleLike,
     handleAddToCart
-  } = useRecipes()
+  } = useGroups()
 
 
-  const getRecipes = ({ page = 1, tags }) => {
+  const getGroups = ({ page = 1, tags }) => {
     api
-      .getRecipes({ page, tags })
+      .getGroups({ page, tags })
       .then(res => {
         const { results, count } = res
-        setRecipes(results)
-        setRecipesCount(count)
+        setGroups(results)
+        setGroupsCount(count)
       })
   }
 
   useEffect(_ => {
-    getRecipes({ page: recipesPage, tags: tagsValue })
-  }, [recipesPage, tagsValue])
+    getGroups({ page: GroupsPage, tags: tagsValue })
+  }, [GroupsPage, tagsValue])
 
   useEffect(_ => {
     api.getTags()
@@ -55,13 +55,13 @@ const HomePage = ({ updateOrders }) => {
         <CheckboxGroup
           values={tagsValue}
           handleChange={value => {
-            setRecipesPage(1)
+            setGroupsPage(1)
             handleTagsChange(value)
           }}
         />
       </div>
       <CardList>
-        {recipes.map(card => <Card
+        {Groups.map(card => <Card
           {...card}
           key={card.id}
           updateOrders={updateOrders}
@@ -70,10 +70,10 @@ const HomePage = ({ updateOrders }) => {
         />)}
       </CardList>
       <Pagination
-        count={recipesCount}
+        count={GroupsCount}
         limit={6}
-        page={recipesPage}
-        onPageChange={page => setRecipesPage(page)}
+        page={GroupsPage}
+        onPageChange={page => setGroupsPage(page)}
       />
     </Container>
   </Main>

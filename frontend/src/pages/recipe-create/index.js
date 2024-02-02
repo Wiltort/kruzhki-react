@@ -6,9 +6,9 @@ import { useTags } from '../../utils'
 import { useHistory } from 'react-router-dom'
 import MetaTags from 'react-meta-tags'
 
-const RecipeCreate = ({ onEdit }) => {
+const GroupCreate = ({ onEdit }) => {
   const { value, handleChange, setValue } = useTags()
-  const [ recipeName, setRecipeName ] = useState('')
+  const [ GroupName, setGroupName ] = useState('')
   const history = useHistory()
   const [ ingredientValue, setIngredientValue ] = useState({
     name: '',
@@ -16,10 +16,10 @@ const RecipeCreate = ({ onEdit }) => {
     amount: '',
     measurement_unit: ''
   })
-  const [ recipeIngredients, setRecipeIngredients ] = useState([])
-  const [ recipeText, setRecipeText ] = useState('')
-  const [ recipeTime, setRecipeTime ] = useState('')
-  const [ recipeFile, setRecipeFile ] = useState(null)
+  const [ GroupIngredients, setGroupIngredients ] = useState([])
+  const [ GroupText, setGroupText ] = useState('')
+  const [ GroupTime, setGroupTime ] = useState('')
+  const [ GroupFile, setGroupFile ] = useState(null)
 
   const [ ingredients, setIngredients ] = useState([])
   const [ showIngredients, setShowIngredients ] = useState(false)
@@ -51,13 +51,13 @@ const RecipeCreate = ({ onEdit }) => {
   }
 
   const checkIfDisabled = () => {
-    return recipeText === '' ||
-    recipeName === '' ||
-    recipeIngredients.length === 0 ||
+    return GroupText === '' ||
+    GroupName === '' ||
+    GroupIngredients.length === 0 ||
     value.filter(item => item.value).length === 0 ||
-    recipeTime === '' ||
-    recipeFile === '' ||
-    recipeFile === null
+    GroupTime === '' ||
+    GroupFile === '' ||
+    GroupFile === null
   }
 
   return <Main>
@@ -73,20 +73,20 @@ const RecipeCreate = ({ onEdit }) => {
         onSubmit={e => {
           e.preventDefault()
           const data = {
-            text: recipeText,
-            name: recipeName,
-            ingredients: recipeIngredients.map(item => ({
+            text: GroupText,
+            name: GroupName,
+            ingredients: GroupIngredients.map(item => ({
               id: item.id,
               amount: item.amount
             })),
             tags: value.filter(item => item.value).map(item => item.id),
-            cooking_time: recipeTime,
-            image: recipeFile
+            cooking_time: GroupTime,
+            image: GroupFile
           }
           api
-          .createRecipe(data)
+          .createGroup(data)
           .then(res => {
-            history.push(`/recipes/${res.id}`)
+            history.push(`/Groups/${res.id}`)
           })
           .catch(err => {
             const { non_field_errors, ingredients, cooking_time } = err
@@ -113,7 +113,7 @@ const RecipeCreate = ({ onEdit }) => {
           label='Название рецепта'
           onChange={e => {
             const value = e.target.value
-            setRecipeName(value)
+            setGroupName(value)
           }}
         />
         <CheckboxGroup
@@ -170,17 +170,17 @@ const RecipeCreate = ({ onEdit }) => {
 
           </div>
           <div className={styles.ingredientsAdded}>
-            {recipeIngredients.map(item => {
+            {GroupIngredients.map(item => {
               return <div
                 className={styles.ingredientsAddedItem}
               >
                 <span className={styles.ingredientsAddedItemTitle}>{item.name}</span> <span>-</span> <span>{item.amount}{item.measurement_unit}</span> <span
                   className={styles.ingredientsAddedItemRemove}
                   onClick={_ => {
-                    const recipeIngredientsUpdated = recipeIngredients.filter(ingredient => {
+                    const GroupIngredientsUpdated = GroupIngredients.filter(ingredient => {
                       return ingredient.id !== item.id
                     })
-                    setRecipeIngredients(recipeIngredientsUpdated)
+                    setGroupIngredients(GroupIngredientsUpdated)
                   }}
                 >Удалить</span>
               </div>
@@ -190,7 +190,7 @@ const RecipeCreate = ({ onEdit }) => {
             className={styles.ingredientAdd}
             onClick={_ => {
               if (ingredientValue.amount === '' || ingredientValue.name === '' || !ingredientValue.id) { return }
-              setRecipeIngredients([...recipeIngredients, ingredientValue])
+              setGroupIngredients([...GroupIngredients, ingredientValue])
               setIngredientValue({
                 name: '',
                 id: null,
@@ -210,9 +210,9 @@ const RecipeCreate = ({ onEdit }) => {
             inputClassName={styles.ingredientsTimeValue}
             onChange={e => {
               const value = e.target.value
-              setRecipeTime(value)
+              setGroupTime(value)
             }}
-            value={recipeTime}
+            value={GroupTime}
           />
           <div className={styles.cookingTimeUnit}>мин.</div>
         </div>
@@ -220,12 +220,12 @@ const RecipeCreate = ({ onEdit }) => {
           label='Описание рецепта'
           onChange={e => {
             const value = e.target.value
-            setRecipeText(value)
+            setGroupText(value)
           }}
         />
         <FileInput
           onChange={file => {
-            setRecipeFile(file)
+            setGroupFile(file)
           }}
           className={styles.fileInput}
           label='Загрузить фото'
@@ -242,4 +242,4 @@ const RecipeCreate = ({ onEdit }) => {
   </Main>
 }
 
-export default RecipeCreate
+export default GroupCreate

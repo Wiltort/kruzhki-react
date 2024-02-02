@@ -16,8 +16,8 @@ import {
   Favorites,
   SingleCard,
   SignUp,
-  RecipeEdit,
-  RecipeCreate,
+  GroupEdit,
+  GroupCreate,
   User,
   ChangePassword
 } from './pages'
@@ -123,13 +123,13 @@ function App() {
 
   useEffect(_ => {
     if (loggedIn) {
-      // history.push('/recipes')
+      // history.push('/Groups')
     }
   }, [loggedIn])
 
   const getOrders = () => {
     api
-      .getRecipes({
+      .getGroups({
         page: 1,
         is_in_shopping_cart: Number(true)
       })
@@ -214,15 +214,15 @@ function App() {
 
           <ProtectedRoute
             exact
-            path='/recipes/create'
-            component={RecipeCreate}
+            path='/Groups/create'
+            component={GroupCreate}
             loggedIn={loggedIn}
           />
 
           <ProtectedRoute
             exact
-            path='/recipes/:id/edit'
-            component={RecipeEdit}
+            path='/Groups/:id/edit'
+            component={GroupEdit}
             loggedIn={loggedIn}
             loadItem={loadSingleItem}
             onItemDelete={getOrders}
@@ -237,7 +237,7 @@ function App() {
 
           <Route
             exact
-            path='/recipes/:id'
+            path='/Groups/:id'
           >
             <SingleCard
               loggedIn={loggedIn}
@@ -246,7 +246,7 @@ function App() {
             />
           </Route>
 
-          <Route exact path='/recipes'>
+          <Route exact path='/Groups'>
             <Main
               updateOrders={updateOrders}
             />
@@ -264,7 +264,7 @@ function App() {
             />
           </Route>
           <Route path='/'>
-            {loggedIn ? <Redirect to='/recipes' /> : <Redirect to='/signin'/>}
+            {loggedIn ? <Redirect to='/Groups' /> : <Redirect to='/signin'/>}
           </Route>
         </Switch>
         <Footer />

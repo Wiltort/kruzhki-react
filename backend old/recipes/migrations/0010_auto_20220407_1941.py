@@ -6,16 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0009_alter_favorite_recipe'),
+        ('Groups', '0009_alter_favorite_Group'),
     ]
 
     operations = [
         migrations.AddConstraint(
             model_name='favorite',
-            constraint=models.UniqueConstraint(fields=('user', 'recipe'), name='unique_favorite'),
+            constraint=models.UniqueConstraint(fields=('user', 'Group'), name='unique_favorite'),
         ),
         migrations.AddConstraint(
             model_name='shoppingcart',
-            constraint=models.UniqueConstraint(fields=('user', 'recipe'), name='unique_recipe'),
+            constraint=models.UniqueConstraint(fields=('user', 'Group'), name='unique_Group'),
         ),
     ]

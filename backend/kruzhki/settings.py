@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'djoser',
     'sorl.thumbnail',
     'debug_toolbar',
     'rest_framework.authtoken',
@@ -130,6 +131,8 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
 
 
@@ -158,12 +161,40 @@ REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20
 }
 
+DJOSER = {
+    "LOGIN_FIELD": 'email',
+    'USER_ID_FIELD': 'id',
+    'PASSWORD_RESET_CONFIRM_URL': 'set_password/{uid}/{token}',
+    "SEND_ACTIVATION_EMAIL": False,
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+
+        'user': 'users.serializers.UserSerializer',
+        'current_user': 'users.serializers.UserSerializer',
+    },
+    'PERMISSIONS': {
+        'activation': ['rest_framework.permissions.AllowAny'],
+        'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+        'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
+        'username_reset': ['rest_framework.permissions.AllowAny'],
+        'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
+        'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
+        'user_create': ['rest_framework.permissions.AllowAny'],
+        'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'token_create': ['rest_framework.permissions.AllowAny'],
+        'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
+    }
+}
 CORS_ORIGIN_ALLOW_ALL = True
 #!!!ОТКРЫТЫЙ АПИ!!!
 

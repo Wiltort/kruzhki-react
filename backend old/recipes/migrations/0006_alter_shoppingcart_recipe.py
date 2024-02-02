@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0005_shoppingcart'),
+        ('Groups', '0005_shoppingcart'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='shoppingcart',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users_shopping_carts', to='recipes.recipe', verbose_name='В списке у пользователей'),
+            name='Group',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users_shopping_carts', to='Groups.Group', verbose_name='В списке у пользователей'),
         ),
     ]

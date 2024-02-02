@@ -11,18 +11,18 @@ class Migration(migrations.Migration):
     dependencies = [
         ('tags', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('recipes', '0012_alter_recipe_image'),
+        ('Groups', '0012_alter_Group_image'),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='recipe',
+            name='Group',
             options={'ordering': ('-pub_date',), 'verbose_name': 'Рецепт', 'verbose_name_plural': 'Рецепты'},
         ),
         migrations.AlterField(
             model_name='favorite',
-            name='recipe',
-            field=models.ForeignKey(help_text='Избранные рецепты у пользователей', on_delete=django.db.models.deletion.CASCADE, related_name='users_favorites', to='recipes.recipe', verbose_name='Избранные у пользователей'),
+            name='Group',
+            field=models.ForeignKey(help_text='Избранные рецепты у пользователей', on_delete=django.db.models.deletion.CASCADE, related_name='users_favorites', to='Groups.Group', verbose_name='Избранные у пользователей'),
         ),
         migrations.AlterField(
             model_name='favorite',
@@ -30,37 +30,37 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(help_text='Избранные рецепты пользователя', on_delete=django.db.models.deletion.CASCADE, related_name='favorites', to=settings.AUTH_USER_MODEL, verbose_name='Избранные рецепты'),
         ),
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='author',
-            field=models.ForeignKey(help_text='Введите автора', on_delete=django.db.models.deletion.CASCADE, related_name='recipes', to=settings.AUTH_USER_MODEL, verbose_name='Автор рецепта'),
+            field=models.ForeignKey(help_text='Введите автора', on_delete=django.db.models.deletion.CASCADE, related_name='Groups', to=settings.AUTH_USER_MODEL, verbose_name='Автор рецепта'),
         ),
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='cooking_time',
             field=models.PositiveSmallIntegerField(help_text='Введите время приготовления', validators=[django.core.validators.MinValueValidator(1, 'Минимальное время: 1 минута')], verbose_name='Время приготовления'),
         ),
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='image',
-            field=models.ImageField(help_text='Загрузите изображение', upload_to='backend_media/recipes/', verbose_name='Изображение'),
+            field=models.ImageField(help_text='Загрузите изображение', upload_to='backend_media/Groups/', verbose_name='Изображение'),
         ),
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='ingredients',
-            field=models.ManyToManyField(help_text='Выберите ингредиенты', through='recipes.IngredientsInRecipe', to='recipes.Ingredient', verbose_name='Ингредиенты'),
+            field=models.ManyToManyField(help_text='Выберите ингредиенты', through='Groups.IngredientsInGroup', to='Groups.Ingredient', verbose_name='Ингредиенты'),
         ),
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='name',
             field=models.CharField(help_text='Введите название рецепта', max_length=200, verbose_name='Название'),
         ),
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='tags',
-            field=models.ManyToManyField(db_index=True, help_text='Выберите теги', related_name='recipes', to='tags.Tag', verbose_name='Теги'),
+            field=models.ManyToManyField(db_index=True, help_text='Выберите теги', related_name='Groups', to='tags.Tag', verbose_name='Теги'),
         ),
         migrations.AlterField(
-            model_name='recipe',
+            model_name='Group',
             name='text',
             field=models.TextField(help_text='Введите описание рецепта', verbose_name='Описание'),
         ),

@@ -10,7 +10,7 @@ import {
 } from '../../components'
 import cn from 'classnames'
 import styles from './styles.module.css'
-import { useRecipes } from '../../utils/index.js'
+import { useGroups } from '../../utils/index.js'
 import { useEffect, useState, useContext } from 'react'
 import api from '../../api'
 import { useParams, useHistory } from 'react-router-dom'
@@ -19,31 +19,31 @@ import MetaTags from 'react-meta-tags'
 
 const UserPage = ({ updateOrders }) => {
   const {
-    recipes,
-    setRecipes,
-    recipesCount,
-    setRecipesCount,
-    recipesPage,
-    setRecipesPage,
+    Groups,
+    setGroups,
+    GroupsCount,
+    setGroupsCount,
+    GroupsPage,
+    setGroupsPage,
     tagsValue,
     setTagsValue,
     handleTagsChange,
     handleLike,
     handleAddToCart
-  } = useRecipes()
+  } = useGroups()
   const { id } = useParams()
   const [ user, setUser ] = useState(null)
   const [ subscribed, setSubscribed ] = useState(false)
   const history = useHistory()
   const userContext = useContext(UserContext)
 
-  const getRecipes = ({ page = 1, tags }) => {
+  const getGroups = ({ page = 1, tags }) => {
     api
-      .getRecipes({ page, author: id, tags })
+      .getGroups({ page, author: id, tags })
         .then(res => {
           const { results, count } = res
-          setRecipes(results)
-          setRecipesCount(count)
+          setGroups(results)
+          setGroupsCount(count)
         })
   }
 
@@ -54,14 +54,14 @@ const UserPage = ({ updateOrders }) => {
         setSubscribed(res.is_subscribed)
       })
       .catch(err => {
-        history.push('/recipes')
+        history.push('/Groups')
       })
   }
 
   useEffect(_ => {
     if (!user) { return }
-    getRecipes({ page: recipesPage, tags: tagsValue, author: user.id })
-  }, [ recipesPage, tagsValue, user ])
+    getGroups({ page: GroupsPage, tags: tagsValue, author: user.id })
+  }, [ GroupsPage, tagsValue, user ])
 
   useEffect(_ => {
     getUser()
@@ -92,7 +92,7 @@ const UserPage = ({ updateOrders }) => {
         <CheckboxGroup
           values={tagsValue}
           handleChange={value => {
-            setRecipesPage(1)
+            setGroupsPage(1)
             handleTagsChange(value)
           }}
         />
@@ -112,7 +112,7 @@ const UserPage = ({ updateOrders }) => {
         {subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
       </Button>}
       <CardList>
-        {recipes.map(card => <Card
+        {Groups.map(card => <Card
           {...card}
           key={card.id}
           updateOrders={updateOrders}
@@ -121,10 +121,10 @@ const UserPage = ({ updateOrders }) => {
         />)}
       </CardList>
       <Pagination
-        count={recipesCount}
+        count={GroupsCount}
         limit={6}
-        page={recipesPage}
-        onPageChange={page => setRecipesPage(page)}
+        page={GroupsPage}
+        onPageChange={page => setGroupsPage(page)}
       />
     </Container>
   </Main>

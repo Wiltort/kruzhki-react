@@ -3,7 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, validators
 
 import users.serializers as users
-from recipes.models import (Favorite, Ingredient, IngredientsInRecipe, Recipe,
+from Groups.models import (Favorite, Ingredient, IngredientsInGroup, Group,
                             ShoppingCart)
 from tags.models import Tag
 from tags.serializers import TagField
@@ -16,7 +16,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class IngredientInRecipeSerializer(serializers.ModelSerializer):
+class IngredientInGroupSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -24,18 +24,18 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = IngredientsInRecipe
+        model = IngredientsInGroup
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
     validators = (
         validators.UniqueTogetherValidator(
-            queryset=IngredientsInRecipe.objects.all(),
-            fields=('ingredient', 'recipe')
+            queryset=IngredientsInGroup.objects.all(),
+            fields=('ingredient', 'Group')
         ),
     )
 
     def __str__(self):
-        return f'{self.ingredient} in {self.recipe}'
+        return f'{self.ingredient} in {self.Group}'
 
 
 class AddIngredientSerializer(serializers.ModelSerializer):
@@ -43,17 +43,17 @@ class AddIngredientSerializer(serializers.ModelSerializer):
     amount = serializers.IntegerField()
 
     class Meta:
-        model = IngredientsInRecipe
+        model = IngredientsInGroup
         fields = ('id', 'amount')
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):
     author = users.CurrentUserSerializer()
     tags = TagField(
         slug_field='id', queryset=Tag.objects.all(), many=True
     )
-    ingredients = IngredientInRecipeSerializer(
-        source='ingredient_in_recipe',
+    ingredients = IngredientInGroupSerializer(
+        source='ingredient_in_Group',
         read_only=True, many=True
     )
     image = Base64ImageField()
@@ -65,7 +65,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Recipe
+        model = Group
         fields = (
             'id',
             'tags',
@@ -83,7 +83,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return model.objects.filter(user=request.user, recipe=obj).exists()
+        return model.objects.filter(user=request.user, Group=obj).exists()
 
     def get_is_favorited(self, obj):
         return self.in_list(obj, Favorite)
@@ -92,7 +92,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return self.in_list(obj, ShoppingCart)
 
 
-class AddRecipeSerializer(serializers.ModelSerializer):
+class AddGroupSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True
@@ -101,7 +101,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(max_length=None)
 
     class Meta:
-        model = Recipe
+        model = Group
         fields = (
             'tags',
             'name',
@@ -112,15 +112,15 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         )
 
     def to_representation(self, instance):
-        serializer = RecipeSerializer(instance)
+        serializer = GroupSerializer(instance)
         return serializer.data
 
-    def create_ingredients(self, ingredients, recipe):
+    def create_ingredients(self, ingredients, Group):
         for ingredient in ingredients:
             amount = ingredient['amount']
             ingredient = ingredient['id']
-            ingredients, created = IngredientsInRecipe.objects.get_or_create(
-                recipe=recipe,
+            ingredients, created = IngredientsInGroup.objects.get_or_create(
+                Group=Group,
                 ingredient=ingredient,
                 amount=amount
             )
@@ -129,11 +129,11 @@ class AddRecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(**validated_data)
-        recipe.tags.set(tags)
-        recipe.save()
-        self.create_ingredients(ingredients, recipe)
-        return recipe
+        Group = Group.objects.create(**validated_data)
+        Group.tags.set(tags)
+        Group.save()
+        self.create_ingredients(ingredients, Group)
+        return Group
 
     @transaction.atomic
     def update(self, instance, validated_data):
@@ -178,8 +178,8 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         return data
 
 
-class ShortRecipeSerializer(serializers.ModelSerializer):
+class ShortGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Recipe
+        model = Group
         fields = ('id', 'name', 'image', 'cooking_time')

@@ -1,8 +1,8 @@
 import hexToRgba from './hex-to-rgba'
 import { useForm, useFormWithValidation } from './validation'
 import { useTags } from './use-tags'
-import useRecipes from './use-recipes'
-import useRecipe from './use-recipe'
+import useGroups from './use-groups'
+import useGroup from './use-group'
 import useSubscriptions from './use-subscriptions'
 
 export {
@@ -10,7 +10,7 @@ export {
   useForm,
   useFormWithValidation,
   useTags,
-  useRecipes,
-  useRecipe,
+  useGroups,
+  useGroup,
   useSubscriptions
 }
