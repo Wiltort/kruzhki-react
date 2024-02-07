@@ -8,8 +8,23 @@ User = get_user_model()
 
 
 class Rubric(models.Model):
-    name = models.CharField(max_length=150)
-    image = models.ImageField(upload_to='rubric/', blank=True, null = True)
+    name = models.CharField(
+        max_length=150,
+        db_index=True,
+        verbose_name = 'Название',
+        help_text='Введите название рубрики'
+        )
+    image = models.ImageField(
+        upload_to='rubric/', 
+        blank=True, 
+        null = True,
+        verbose_name='Изображение',
+        help_text='Загрузите изображение для рубрики'
+        )
+    
+    class Meta:
+        verbose_name = 'Рубрика'
+        verbose_name_plural = 'Рубрики'
 
     def __str__(self):
         return self.name
@@ -18,7 +33,7 @@ class Rubric(models.Model):
 class Stud_Group(models.Model):
     name = models.CharField(verbose_name='Группа', unique=True, max_length=50)
     title = models.CharField(verbose_name='Название курса', max_length=150)
-    image = models.ImageField(upload_to='group/', blank=True, null = True)
+    image = models.ImageField(upload_to='groups/', blank=True, null = True)
     teacher = models.ForeignKey(User, on_delete=models.PROTECT, 
                                 related_name='work_groups', 
                                 verbose_name='Преподаватель', 

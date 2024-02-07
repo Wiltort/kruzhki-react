@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import Stud_Group, Student, Lesson, Attending, Schedule
+from .models import Stud_Group, Student, Lesson, Attending, Schedule, Rubric
+
+class RubricAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name', 'image', 'work')
+    search_fields = ('pk', 'name')
+    readonly_fields = ('work_groups',)
+
+    def work_groups(self, instance):
+        return 'str(Stud_Group.objects.get(Rubric = instance))'
 
 
 class Stud_GroupAdmin(admin.ModelAdmin):
@@ -32,3 +40,5 @@ admin.site.register(Student, StudentsAdmin)
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Attending, AttendingAdmin)
 admin.site.register(Schedule, ScheduleAdmin)
+admin.site.register(Rubric, RubricAdmin)
+
