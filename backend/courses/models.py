@@ -31,8 +31,17 @@ class Rubric(models.Model):
 
 
 class Stud_Group(models.Model):
-    name = models.CharField(verbose_name='Группа', unique=True, max_length=50)
-    title = models.CharField(verbose_name='Название курса', max_length=150)
+    name = models.CharField(
+        verbose_name='Номер', 
+        unique=True, 
+        max_length=50,
+        help_text='Введите номер группы'
+        )
+    title = models.CharField(
+        verbose_name='Название курса',
+        max_length=150,
+        help_text='Введите название курса'
+        )
     image = models.ImageField(upload_to='groups/', blank=True, null = True)
     teacher = models.ForeignKey(User, on_delete=models.PROTECT, 
                                 related_name='work_groups', 
@@ -42,15 +51,38 @@ class Stud_Group(models.Model):
                                    blank=True)
     number_of_lessons = models.SmallIntegerField()
     rubric = models.ForeignKey(Rubric, on_delete=models.PROTECT, 
-                               related_name='stud_groups')
+                               related_name='stud_groups',
+                               verbose_name='Рубрика')
+    
+    class Meta:
+        verbose_name = 'Группа обучения'
+        verbose_name_plural = 'Группы обучения'
+    
+    def __str__(self):
+        return self.name
     
 
 class Student(models.Model):
-    user = models.ForeignKey(User, related_name='study',
-                             limit_choices_to={'is_staff': False},
-                             on_delete=models.PROTECT)
-    in_group = models.ForeignKey(Stud_Group, related_name='students', 
-                                 on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        User, 
+        related_name='study',
+        limit_choices_to={'is_staff': False},
+        on_delete=models.PROTECT,
+        verbose_name='Обучающийся',
+        )
+    in_group = models.ForeignKey(
+        Stud_Group, 
+        related_name='students', 
+        on_delete=models.PROTECT,
+        verbose_name='Состоит в группе'
+        )
+    
+    class Meta:
+        verbose_name='Обучающийся'
+        verbose_name_plural='Обучающиеся'
+
+    def __str__(self):
+        return self.user.get_username()
 
 
 class Lesson(models.Model):

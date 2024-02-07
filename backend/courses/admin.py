@@ -2,23 +2,27 @@ from django.contrib import admin
 from .models import Stud_Group, Student, Lesson, Attending, Schedule, Rubric
 
 class RubricAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'image', 'work')
+    list_display = ('pk', 'name', 'image', 'stud_groups')
     search_fields = ('pk', 'name')
-    readonly_fields = ('work_groups',)
+    readonly_fields = ('stud_groups',)
 
-    def work_groups(self, instance):
-        return 'str(Stud_Group.objects.get(Rubric = instance))'
+    def stud_groups(self, instance):
+        return Stud_Group.objects.filter(rubric = instance)
 
 
 class Stud_GroupAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'title', 'teacher')
+    list_display = ('pk', 'name', 'title', 'teacher', 'rubric', 'students')
     search_fields = ('name', 'teacher')
-    list_filter = ('teacher',)
+    list_filter = ('teacher', 'rubric')
+
+    def students(self, instance):
+        return Student.objects.filter(in_group=instance)
 
 
 class StudentsAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'in_group')
     search_fields = ('pk', 'user', 'in_group')
+    list_filter = ('in_group',)
 
 
 class LessonAdmin(admin.ModelAdmin):
