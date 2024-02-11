@@ -3,7 +3,7 @@ from django.shortcuts import render
 from typing import Any
 from django.db.models.query import QuerySet
 from .models import Stud_Group, Rubric, Student
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from .serializers import (
     Stud_GroupSerializer, 
     RubricSerializer, 
@@ -12,28 +12,33 @@ from .serializers import (
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
     IsAuthenticated,
+    AllowAny
     )
 from .permissions import (
     IsAdminOrReadOnly, IsAdminOrAllowedTeacher, IsAdminOrTeacher
     )
 from rest_framework.pagination import PageNumberPagination
 from django.views.generic import ListView
+from .pagination import CustomPagination
+from django_filters.rest_framework import DjangoFilterBackend
 
 
-class RubricViewSet(viewsets.ModelViewSet):
+class RubricViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Rubric.objects.all()
     serializer_class = RubricSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
-
-    #def perform_create(self, serializer):
-    #    serializer.save(stud_groups = None)
+    permission_classes = (AllowAny,)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Stud_Group.objects.all()
     serializer_class = Stud_GroupSerializer
     permission_classes = [IsAuthenticatedOrReadOnly,]
-    pagination_class = PageNumberPagination
+    pagination_class = CustomPagination
+    filter_backends = (DjangoFilterBackend,)
 
 
 class StudentViewSet(viewsets.ModelViewSet):

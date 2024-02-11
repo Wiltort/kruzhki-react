@@ -11,15 +11,21 @@ class IsAdminOrReadOnly(permissions.BasePermission):
         return request.user.is_superuser
     
 
-class IsAdminOrAllowedTeacher(permissions.BasePermission):
+class IsAdminOrAllowedTeacherOrReadOnly(permissions.BasePermission):
     """
     Permission to teacher of group to readonly and admin to edit
     """
+    def has_permission(self, request, view):
+        return (
+            request.method in permissions.SAFE_METHODS
+            or request.user.is_authenticated
+        )
+
     def has_object_permission(self, request, view, obj):
         user = request.user
         if request.method in permissions.SAFE_METHODS:
-            return user.is_superuser or obj.teacher == user
-        return user.is_superuser
+            return True
+        return user.is_superuser or obj.teacher == user
 
 
 class IsAdminOrTeacher(permissions.BasePermission):

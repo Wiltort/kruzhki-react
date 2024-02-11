@@ -1,7 +1,7 @@
 export default [
   {
     title: 'Наша школа',
-    href: '/courses',
+    href: '/groups',
     auth: false
   },{
     title: 'Мои курсы',

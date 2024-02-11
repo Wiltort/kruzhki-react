@@ -21,6 +21,12 @@ class Rubric(models.Model):
         verbose_name='Изображение',
         help_text='Загрузите изображение для рубрики'
         )
+    slug = models.SlugField(
+        max_length = 50,
+        unique = True,
+        verbose_name = 'Слаг',
+        help_text = 'Введите слаг'
+    )
     
     class Meta:
         verbose_name = 'Рубрика'
@@ -119,3 +125,26 @@ class Schedule(models.Model):
     day_of_week = models.SmallIntegerField(choices=Days.choices)
     duration = models.DurationField(default=datetime.timedelta(minutes=45))
     begin_at = models.TimeField()
+
+
+class Joining(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name = 'joining_to',
+        verbose_name='Заявки на курсы',
+        )
+    group = models.ForeignKey(
+        Stud_Group,
+        on_delete=models.CASCADE,
+        related_name='join_requests',
+        verbose_name='Заявки на курс'
+    )
+    date = models.DateTimeField(
+        'Дата заявления',
+        auto_now_add=True,
+    )
+
+    def __str__(self):
+        return f'{self.user} submitted a request to join {self.group}'
