@@ -3,6 +3,7 @@ from .models import Rubric, Stud_Group, Student, Lesson, Schedule, Attending, Te
 from rest_framework.validators import UniqueTogetherValidator
 from users.serializers import UserSerializer
 from django.contrib.auth import get_user_model
+from drf_extra_fields.fields import Base64ImageField
 
 
 User = get_user_model()
@@ -69,6 +70,7 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
         slug_field='id', queryset=Rubric.objects.all())
     is_in_students = serializers.SerializerMethodField(method_name='get_is_in_students')
     is_teacher = serializers.SerializerMethodField(method_name='get_is_teacher')
+    image = Base64ImageField()
 
     class Meta:
         model = Stud_Group
@@ -87,3 +89,26 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return request.user == obj.teacher
+
+
+class AddStud_GroupSerializer(serializers.ModelSerializer):
+    rubric = serializers.PrimaryKeyRelatedField(
+        queryset=Rubric.objects.all(),
+    )
+    image = Base64ImageField(max_length=None)
+
+    class Meta:
+        model = Stud_Group
+        fields = (
+            'rubric',
+            'name',
+            'title',
+            'image',
+            'description',
+            'number_of_lessons'
+        )
+    
+    def to_representation(self, instance):
+        serializer = Stud_GroupSerializer(instance)
+        return serializer.data
+    

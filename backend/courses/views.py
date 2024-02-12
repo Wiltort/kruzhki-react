@@ -15,12 +15,13 @@ from rest_framework.permissions import (
     AllowAny
     )
 from .permissions import (
-    IsAdminOrReadOnly, IsAdminOrAllowedTeacher, IsAdminOrTeacher
+    IsAdminOrReadOnly, IsAdminOrAllowedTeacherOrReadOnly, IsAdminOrTeacher
     )
 from rest_framework.pagination import PageNumberPagination
 from django.views.generic import ListView
 from .pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
+from .filters import RubricFilter
 
 
 class RubricViewSet(
@@ -36,9 +37,11 @@ class RubricViewSet(
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Stud_Group.objects.all()
     serializer_class = Stud_GroupSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly)
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend,)
+    filterset_class = RubricFilter
+
 
 
 class StudentViewSet(viewsets.ModelViewSet):
