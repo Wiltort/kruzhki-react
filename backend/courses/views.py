@@ -8,6 +8,7 @@ from .serializers import (
     Stud_GroupSerializer, 
     RubricSerializer, 
     StudentSerializer,
+    AddStud_GroupSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -36,11 +37,23 @@ class RubricViewSet(
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Stud_Group.objects.all()
-    serializer_class = Stud_GroupSerializer
-    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly)
+    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly,)
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RubricFilter
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return Stud_GroupSerializer
+        return AddStud_GroupSerializer
+    
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(teacher=user)
+
+    
+
+    
 
 
 

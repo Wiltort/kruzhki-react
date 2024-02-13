@@ -7,7 +7,7 @@ from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
-router.register('v1/rubrics', RubricViewSet, basename='rubrics')
+router.register('v1/rubrics', RubricViewSet, basename='rubric')
 router.register('v1/groups', GroupViewSet)
 router.register('v1/students', StudentViewSet)
 

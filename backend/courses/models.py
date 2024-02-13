@@ -76,10 +76,9 @@ class Student(models.Model):
         on_delete=models.PROTECT,
         verbose_name='Обучающийся',
         )
-    in_group = models.ForeignKey(
+    in_group = models.ManyToManyField(
         Stud_Group, 
-        related_name='students', 
-        on_delete=models.PROTECT,
+        related_name='students',
         verbose_name='Состоит в группе'
         )
     
@@ -145,6 +144,16 @@ class Joining(models.Model):
         'Дата заявления',
         auto_now_add=True,
     )
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+            fields=('user', 'group'),
+            name='unique_joining'
+            ),
+        )
+        verbose_name = 'Заявка'
+        verbose_name_plural = 'Заявки'
 
     def __str__(self):
         return f'{self.user} submitted a request to join {self.group}'

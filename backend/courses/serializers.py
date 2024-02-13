@@ -1,9 +1,10 @@
 from rest_framework import serializers
-from .models import Rubric, Stud_Group, Student, Lesson, Schedule, Attending, Teacher
+from .models import Rubric, Stud_Group, Student, Lesson, Schedule, Attending
 from rest_framework.validators import UniqueTogetherValidator
 from users.serializers import UserSerializer
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
+from django.db import transaction
 
 
 User = get_user_model()
@@ -54,10 +55,10 @@ class RubricSerializer(serializers.ModelSerializer):
 
 class RubricField(serializers.SlugRelatedField):
     
-    def to_representation(self, obj):
+    def to_representation(self, value):
         request = self.context.get('request')
         context = {'request': request}
-        serializer = RubricSerializer(obj, context=context)
+        serializer = RubricSerializer(value, context=context)
         return serializer.data
 
 
@@ -76,7 +77,7 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
         model = Stud_Group
         fields = ['id', 'name', 'title', 'teacher', 'description', 
                   'number_of_lessons', 'rubric', 'students', 'lessons',
-                  'schedule', 'image']
+                  'schedule', 'image', 'is_teacher', 'is_in_students']
 
     def get_is_in_students(self, obj):
         request = self.context.get('request')
@@ -112,3 +113,37 @@ class AddStud_GroupSerializer(serializers.ModelSerializer):
         serializer = Stud_GroupSerializer(instance)
         return serializer.data
     
+    @transaction.atomic
+    def create(self, validated_data):
+        rubric = validated_data.pop('rubric')
+        st_group = Stud_Group.objects.create(**validated_data)
+        st_group.rubric.set(rubric)
+        st_group.save()
+        #self.create... создать расписание и уроки
+        return st_group
+    
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        rubric = validated_data.pop('rubric')
+        instance.rubric.clear()
+        instance.rubric.set(rubric)
+        return super().update(instance, validated_data)
+    
+    def validate(self, data):
+        rub = data['rubric']
+        if not rub:
+            raise serializers.ValidationError(
+                'Поле "Рубрика" не может быть пустым'
+            )
+        if data['number_of_lessons']<=0:
+            raise serializers.ValidationError(
+                'Количество уроков не может быть меньше 1'
+            )
+        return data
+    
+
+class ShortGroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Stud_Group
+        fields = ('id', 'name', 'title', 'image')

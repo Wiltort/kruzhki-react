@@ -33,7 +33,7 @@ class Api {
 
   signin ({ email, password }) {
     return fetch(
-      '/api/auth/token/login/',
+      '/api/v1/auth/token/login/',
       {
         method: 'POST',
         headers: this._headers,
@@ -47,7 +47,7 @@ class Api {
   signout () {
     const token = localStorage.getItem('token')
     return fetch(
-      '/api/auth/token/logout/',
+      '/api/v1/auth/token/logout/',
       {
         method: 'POST',
         headers: {
@@ -60,7 +60,7 @@ class Api {
 
   signup ({ email, password, username, first_name, last_name }) {
     return fetch(
-      `/api/users/`,
+      `/api/v1/users/`,
       {
         method: 'POST',
         headers: this._headers,
@@ -74,7 +74,7 @@ class Api {
   getUserData () {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/users/me/`,
+      `/api/v1/users/me/`,
       {
         method: 'GET',
         headers: {
@@ -88,7 +88,7 @@ class Api {
   changePassword ({ current_password, new_password }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/users/set_password/`,
+      `/api/v1/users/set_password/`,
       {
         method: 'POST',
         headers: {
@@ -108,14 +108,14 @@ class Api {
     limit = 6,
     is_favorited = 0,
     is_in_shopping_cart = 0,
-    author,
-    tags
+    teacher,
+    rubric
   } = {}) {
       const token = localStorage.getItem('token')
       const authorization = token ? { 'authorization': `Token ${token}` } : {}
-      const tagsString = tags ? tags.filter(tag => tag.value).map(tag => `&tags=${tag.slug}`).join('') : ''
+      const rubricsString = rubric ? rubric.filter(rubric => rubric.value).map(rubric => `&rubric=${rubric.slug}`).join('') : ''
       return fetch(
-        `/api/v1/groups/?page=${page}&limit=${limit}${tagsString}`,
+        `/api/v1/groups/?page=${page}&limit=${limit}${rubricsString}`,
         {
           method: 'GET',
           headers: {
@@ -234,7 +234,7 @@ class Api {
   getUser ({ id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/users/${id}/`,
+      `/api/v1/users/${id}/`,
       {
         method: 'GET',
         headers: {
@@ -251,7 +251,7 @@ class Api {
   }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/users/?page=${page}&limit=${limit}`,
+      `/api/v1/users/?page=${page}&limit=${limit}`,
       {
         method: 'GET',
         headers: {

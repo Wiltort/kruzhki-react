@@ -19,10 +19,9 @@ class Stud_GroupAdmin(admin.ModelAdmin):
         return Student.objects.filter(in_group=instance)
 
 
-class StudentsAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'user', 'in_group')
-    search_fields = ('pk', 'user', 'in_group')
-    list_filter = ('in_group',)
+#class StudentsAdmin(admin.ModelAdmin):
+#    list_display = ('pk', 'user')
+#    search_fields = ('pk', 'user')
 
 
 class LessonAdmin(admin.ModelAdmin):
@@ -40,7 +39,7 @@ class ScheduleAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Stud_Group, Stud_GroupAdmin)
-admin.site.register(Student, StudentsAdmin)
+#admin.site.register(Student, StudentsAdmin)
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Attending, AttendingAdmin)
 admin.site.register(Schedule, ScheduleAdmin)

@@ -21,9 +21,9 @@ const HomePage = ({ updateOrders }) => {
   } = useRecipes()
 
 
-  const getRecipes = ({ page = 1, tags }) => {
+  const getRecipes = ({ page = 1, rubric }) => {
     api
-      .getRecipes({ page, tags })
+      .getRecipes({ page, rubric })
       .then(res => {
         const { results, count } = res
         setRecipes(results)
@@ -32,13 +32,13 @@ const HomePage = ({ updateOrders }) => {
   }
 
   useEffect(_ => {
-    getRecipes({ page: recipesPage, tags: tagsValue })
+    getRecipes({ page: recipesPage, rubric: tagsValue })
   }, [recipesPage, tagsValue])
 
   useEffect(_ => {
     api.getTags()
-      .then(tags => {
-        setTagsValue(tags.map(tag => ({ ...tag, value: true })))
+      .then(rubric => {
+        setTagsValue(rubric.map(rubric => ({ ...rubric, value: true })))
       })
   }, [])
 
