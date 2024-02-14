@@ -8,8 +8,8 @@ User = get_user_model()
 class RubricFilter(FilterSet):
     teacher = filters.ModelChoiceFilter(
         queryset=User.objects.filter(is_staff=True))
-    rubrics = filters.ModelMultipleChoiceFilter(
-        field_name='rubrics__slug',
+    rubric = filters.ModelMultipleChoiceFilter(
+        field_name='rubric__slug',
         queryset=Rubric.objects.all(),
         to_field_name='slug',
     )
