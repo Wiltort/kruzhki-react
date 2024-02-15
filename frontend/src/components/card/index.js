@@ -20,13 +20,13 @@ const Card = ({
   return <div className={styles.card}>
       <LinkComponent
         className={styles.card__title}
-        href={`/recipes/${id}`}
+        href={`/groups/${id}`}
         title={<div className={styles.card__image} style={{ backgroundImage: `url(${ image })` }} />}
       />
       <div className={styles.card__body}>
         <LinkComponent
           className={styles.card__title}
-          href={`/recipes/${id}`}
+          href={`/groups/${id}`}
           title={name}
         />
         <TagsContainer tags={rubric} />

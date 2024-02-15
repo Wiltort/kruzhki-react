@@ -34,19 +34,19 @@ const SingleCard = ({ loadItem, updateOrders }) => {
         setLoading(false)
       })
       .catch(err => {
-        history.push('/recipes')
+        history.push('/groups')
       })
   }, [])
   
   const { url } = useRouteMatch()
   const {
-    author = {},
+    teacher = {},
     image,
-    tags,
-    cooking_time,
+    rubric,
+    number_of_lessons,
     name,
     ingredients,
-    text,
+    description,
     is_favorited,
     is_in_shopping_cart
   } = recipe
@@ -72,18 +72,18 @@ const SingleCard = ({ loadItem, updateOrders }) => {
                 {is_favorited ? <Icons.StarBigActiveIcon /> : <Icons.StarBigIcon />}
               </Button>}
           </div>
-          <TagsContainer tags={tags} />
+          <TagsContainer tags={rubric} />
           <div>
-            <p className={styles['single-card__text']}><Icons.ClockIcon /> {cooking_time} мин.</p>
+            <p className={styles['single-card__text']}><Icons.ClockIcon /> {number_of_lessons} ч.</p>
             <p className={styles['single-card__text_with_link']}>
               <div className={styles['single-card__text']}>
                 <Icons.UserIcon /> <LinkComponent
-                  title={`${author.first_name} ${author.last_name}`}
-                  href={`/user/${author.id}`}
+                  title={`${teacher.first_name} ${teacher.last_name}`}
+                  href={`/user/${teacher.id}`}
                   className={styles['single-card__link']}
                 />
               </div>
-              {(userContext || {}).id === author.id && <LinkComponent
+              {(userContext || {}).id === teacher.id && <LinkComponent
                 href={`${url}/edit`}
                 title='Редактировать рецепт'
                 className={styles['single-card__edit']}
@@ -101,18 +101,18 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               
             {is_in_shopping_cart ? <><Icons.DoneIcon color="#4A61DD"/>Рецепт добавлен</> : <><Icons.PlusIcon /> Добавить в покупки</>}
             </Button>}
-            {(userContext || {}).id !== author.id && authContext && <Button
+            {(userContext || {}).id !== teacher.id && authContext && <Button
               className={styles['single-card__button']}
               modifier='style_light-blue'
               clickHandler={_ => {
-                handleSubscribe({ author_id: author.id, toSubscribe: !author.is_subscribed })
+                handleSubscribe({ teacher_id: teacher.id, toSubscribe: !teacher.is_subscribed })
               }}
             >
-              {author.is_subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
+              {teacher.is_subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
             </Button>}
           </div>
           <Ingredients ingredients={ingredients} />
-          <Description description={text} />
+          <Description description={description} />
         </div>
     </div>
     </Container>

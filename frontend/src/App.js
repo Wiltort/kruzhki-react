@@ -237,7 +237,7 @@ function App() {
 
           <Route
             exact
-            path='/recipes/:id'
+            path='/groups/:id'
           >
             <SingleCard
               loggedIn={loggedIn}

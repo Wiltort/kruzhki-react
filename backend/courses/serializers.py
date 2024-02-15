@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Rubric, Stud_Group, Student, Lesson, Schedule, Attending
 from rest_framework.validators import UniqueTogetherValidator
-from users.serializers import UserSerializer
+from users.serializers import CurrentUserSerializer
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from django.db import transaction
@@ -66,7 +66,7 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many = True, read_only = True)
     lessons = LessonSerializer(many = True, read_only = True)
     schedule = ScheduleSerializer(many = True, read_only = True)
-    teacher = UserSerializer()
+    teacher = CurrentUserSerializer()
     rubric = RubricField(
         slug_field='id', queryset=Rubric.objects.all(), many=True
     )

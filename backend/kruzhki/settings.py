@@ -175,8 +175,8 @@ DJOSER = {
     'HIDE_USERS': False,
     'SERIALIZERS': {
 
-        'user': 'users.serializers.UserSerializer',
-        'current_user': 'users.serializers.UserSerializer',
+        'user': 'users.serializers.CurrentUserSerializer',
+        'current_user': 'users.serializers.CurrentUserSerializer',
     },
     'PERMISSIONS': {
         'activation': ['rest_framework.permissions.AllowAny'],
@@ -193,7 +193,3 @@ DJOSER = {
         'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
     }
 }
-CORS_ORIGIN_ALLOW_ALL = True
-#!!!ОТКРЫТЫЙ АПИ!!!
-
-CORS_URLS_REGEX = r'^/api/.*$'
