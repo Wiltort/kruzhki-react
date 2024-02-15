@@ -5,11 +5,11 @@ import { Tag } from '../index'
 const TagsContainer = ({ tags }) => {
   if (!tags) { return null }
   return <div className={styles['tags-container']}>
-    {tags.map(tag => {
+    {tags.map(rubric => {
       return <Tag
-        key={tag.id}
-        color={tag.color}
-        name={tag.name}
+        key={rubric.id}
+        color={rubric.color}
+        name={rubric.name}
       />
     })}
   </div>
