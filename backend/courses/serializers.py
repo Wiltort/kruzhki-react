@@ -68,7 +68,8 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
     schedule = ScheduleSerializer(many = True, read_only = True)
     teacher = UserSerializer()
     rubric = RubricField(
-        slug_field='id', queryset=Rubric.objects.all())
+        slug_field='id', queryset=Rubric.objects.all(), many=True
+    )
     is_in_students = serializers.SerializerMethodField(method_name='get_is_in_students')
     is_teacher = serializers.SerializerMethodField(method_name='get_is_teacher')
     image = Base64ImageField()

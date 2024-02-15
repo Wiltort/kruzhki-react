@@ -9,7 +9,7 @@ const Card = ({
   image,
   is_favorited,
   is_in_shopping_cart,
-  tags,
+  rubric,
   number_of_lessons,
   teacher = {},
   handleLike,
@@ -29,7 +29,7 @@ const Card = ({
           href={`/recipes/${id}`}
           title={name}
         />
-        <TagsContainer tags={tags} />
+        <TagsContainer tags={rubric} />
         <div className={styles.card__time}>
           <Icons.ClockIcon /> {number_of_lessons} ч.
         </div>

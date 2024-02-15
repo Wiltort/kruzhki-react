@@ -56,9 +56,11 @@ class Stud_Group(models.Model):
     description = models.TextField(verbose_name='Описание', 
                                    blank=True)
     number_of_lessons = models.SmallIntegerField()
-    rubric = models.ForeignKey(Rubric, on_delete=models.PROTECT, 
-                               related_name='stud_groups',
-                               verbose_name='Рубрика')
+    rubric = models.ManyToManyField(
+        Rubric,
+        db_index=True,
+        related_name='stud_groups',
+        verbose_name='Рубрика')
     
     class Meta:
         verbose_name = 'Группа обучения'
