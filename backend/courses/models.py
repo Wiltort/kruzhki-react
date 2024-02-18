@@ -62,6 +62,9 @@ class Stud_Group(models.Model):
         related_name='stud_groups',
         verbose_name='Студенты',
         limit_choices_to={'is_staff': False})
+    #begin_at = models.DateField(
+    #    verbose_name='Начало обучения'
+    #)
     
     class Meta:
         verbose_name = 'Группа обучения'
@@ -114,6 +117,7 @@ class Joining(models.Model):
         on_delete=models.CASCADE,
         related_name = 'joining_to',
         verbose_name='Заявки на курсы',
+        limit_choises_to={'is_staff': False}
         )
     group = models.ForeignKey(
         Stud_Group,
@@ -132,6 +136,9 @@ class Joining(models.Model):
             fields=('user', 'group'),
             name='unique_joining'
             ),
+            models.CheckConstraint(
+                check=models.Q(user )
+            )
         )
         verbose_name = 'Заявка'
         verbose_name_plural = 'Заявки'

@@ -19,9 +19,9 @@ export default function useRecipe () {
   }
 
   const handleAddToCart = ({ id, toAdd = 1, callback }) => {
-    const method = toAdd ? api.addToOrders.bind(api) : api.removeFromOrders.bind(api)
+    const method = toAdd ? api.addToJoinings.bind(api) : api.removeFromJoinings.bind(api)
     method({ id }).then(res => {
-      const recipeUpdated = { ...recipe, is_in_shopping_cart: Number(toAdd) }
+      const recipeUpdated = { ...recipe, is_joining: Number(toAdd) }
       setRecipe(recipeUpdated)
       callback && callback(toAdd)
     })

@@ -47,7 +47,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
     name,
     ingredients,
     description,
-    is_favorited,
+    is_joining,
     is_in_shopping_cart
   } = recipe
   
@@ -66,10 +66,10 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               {authContext && <Button
                 modifier='style_none'
                 clickHandler={_ => {
-                  handleLike({ id, toLike: Number(!is_favorited) })
+                  handleLike({ id, toLike: Number(!is_joining) })
                 }}
               >
-                {is_favorited ? <Icons.StarBigActiveIcon /> : <Icons.StarBigIcon />}
+                {is_joining ? <Icons.StarBigActiveIcon /> : <Icons.StarBigIcon />}
               </Button>}
           </div>
           <TagsContainer tags={rubric} />
@@ -93,13 +93,13 @@ const SingleCard = ({ loadItem, updateOrders }) => {
           <div className={styles['single-card__buttons']}>
             {authContext && <Button
               className={styles['single-card__button']}
-              modifier={is_in_shopping_cart ? 'style_light' : 'style_dark-blue'}
+              modifier={is_joining ? 'style_light' : 'style_dark-blue'}
               clickHandler={_ => {
-                handleAddToCart({ id, toAdd: Number(!is_in_shopping_cart), callback: updateOrders })
+                handleAddToCart({ id, toAdd: Number(!is_joining), callback: updateOrders })
               }}
             >
               
-            {is_in_shopping_cart ? <><Icons.DoneIcon color="#4A61DD"/>Рецепт добавлен</> : <><Icons.PlusIcon /> Добавить в покупки</>}
+            {is_joining ? <><Icons.DoneIcon color="#4A61DD"/>Заявка подана</> : <><Icons.PlusIcon /> Подать заявку</>}
             </Button>}
             {(userContext || {}).id !== teacher.id && authContext && <Button
               className={styles['single-card__button']}
