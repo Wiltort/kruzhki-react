@@ -7,7 +7,8 @@ const Card = ({
   name = 'Без названия',
   id,
   image,
-  is_favorited,
+  is_joining,
+  is_in_students,
   is_in_shopping_cart,
   rubric,
   number_of_lessons,
@@ -45,26 +46,26 @@ const Card = ({
       <div className={styles.card__footer}>
           {authContext && <Button
             className={styles.card__add}
-            modifier={is_in_shopping_cart ? 'style_light' : 'style_light-blue'}
+            modifier={is_joining ? 'style_light' : 'style_light-blue'}
             clickHandler={_ => {
               handleAddToCart({
                 id,
-                toAdd: Number(!is_in_shopping_cart),
+                toAdd: Number(!is_joining),
                 callback: updateOrders
               })
             }}
             disabled={!authContext}
           >
-            {is_in_shopping_cart ? <><Icons.DoneIcon />Рецепт добавлен</> : <><Icons.PlusIcon fill='#4A61DD' /> Добавить в покупки</>}
+            {is_joining ? <><Icons.DoneIcon />Заявка отправлена</> : <><Icons.PlusIcon fill='#4A61DD' /> Подать заявку</>}
           </Button>}
           
           {authContext && <Button
             modifier='style_none'
             clickHandler={_ => {
-              handleLike({ id, toLike: Number(!is_favorited) })
+              handleLike({ id, toLike: Number(!is_joining) })
             }}
           >
-            {is_favorited ? <Icons.StarActiveIcon /> : <Icons.StarIcon />}
+            {is_joining ? <Icons.StarActiveIcon /> : <Icons.StarIcon />}
           </Button>}
       </div>
   </div>

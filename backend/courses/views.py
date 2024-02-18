@@ -1,28 +1,26 @@
-from django.shortcuts import render
-#from django.http import HttpResponse
-from typing import Any
-from django.db.models.query import QuerySet
-from .models import Stud_Group, Rubric
-from rest_framework import viewsets, mixins
+from django.shortcuts import render, get_object_or_404
+from .models import Stud_Group, Rubric, Joining
+from rest_framework import viewsets, mixins, status
 from .serializers import (
     Stud_GroupSerializer, 
-    RubricSerializer, 
-    StudentSerializer,
-    AddStud_GroupSerializer
+    RubricSerializer,
+    AddStud_GroupSerializer,
+    ShortGroupSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
     IsAuthenticated,
     AllowAny
     )
-from .permissions import (
-    IsAdminOrAllowedTeacherOrReadOnly, IsAdminOrTeacher
-    )
-from rest_framework.pagination import PageNumberPagination
+from .permissions import (IsAdminOrAllowedTeacherOrReadOnly, IsAdminOrTeacher)
 from django.views.generic import ListView
 from .pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import RubricFilter
+from rest_framework.decorators import action
+from rest_framework.validators import ValidationError
+from rest_framework.response import Response
+
 
 
 class RubricViewSet(
@@ -51,22 +49,29 @@ class GroupViewSet(viewsets.ModelViewSet):
         user = self.request.user
         serializer.save(teacher=user)
 
+    @action(
+        detail=True,
+        methods=('post','delete'),
+        permission_classes=(IsAuthenticated,)
+        )
+    def join(self, request, pk=None):
+        if request.method == 'POST':
+            return self.add_group(Joining, request, pk)
+        return self.delete_group(Joining, request, pk)
     
+    def add_group(self, model, request, pk):
+        group = get_object_or_404(Stud_Group, pk=pk)
+        user = self.request.user
+        if model.objects.filter(group=group, user=user).exists():
+            raise ValidationError('Заявка уже отправлена')
+        model.objects.create(group=group, user=user)
+        serializer=ShortGroupSerializer(group)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
+    def delete_group(self, model, request, pk):
+        group = get_object_or_404(Stud_Group, pk=pk)
+        user = self.request.user
+        obj = get_object_or_404(model, group=group, user=user)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
-
-
-
-
-
-
-class CoursesView(ListView):
-    template_name = 'index.html'
-    context_object_name = 'courses'
-    model = Stud_Group
-    
-
-def index(request):
-    courses = Stud_Group.objects.order_by('rubric')
-    
-    return render(request, "index.html", {"courses": courses})

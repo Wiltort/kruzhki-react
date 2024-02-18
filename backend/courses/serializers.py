@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Rubric, Stud_Group, Lesson, Schedule, Attending
+from .models import Rubric, Stud_Group, Lesson, Schedule, Attending, Joining
 from rest_framework.validators import UniqueTogetherValidator
 from users.serializers import CurrentUserSerializer
 from users.models import User
@@ -63,13 +63,14 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
     )
     is_in_students = serializers.SerializerMethodField(method_name='get_is_in_students')
     is_teacher = serializers.SerializerMethodField(method_name='get_is_teacher')
+    is_joining = serializers.SerializerMethodField(method_name='get_is_joining')
     image = Base64ImageField()
 
     class Meta:
         model = Stud_Group
         fields = ['id', 'name', 'title', 'teacher', 'description', 
                   'number_of_lessons', 'rubric', 'students', 'lessons',
-                  'schedule', 'image', 'is_teacher', 'is_in_students']
+                  'schedule', 'image', 'is_teacher', 'is_in_students', 'is_joining']
 
     def get_is_in_students(self, obj):
         request = self.context.get('request')
@@ -82,6 +83,12 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return request.user == obj.teacher
+    
+    def get_is_joining(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return Joining.objects.filter(user=request.user, group=obj).exists()
 
 
 class AddStud_GroupSerializer(serializers.ModelSerializer):
@@ -138,4 +145,4 @@ class ShortGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stud_Group
-        fields = ('id', 'name', 'title', 'image')
+        fields = ('id', 'name', 'title', 'image', 'number_of_lessons')

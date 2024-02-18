@@ -115,7 +115,7 @@ class Api {
       const authorization = token ? { 'authorization': `Token ${token}` } : {}
       const rubricsString = rubric ? rubric.filter(rubric => rubric.value).map(rubric => `&rubric=${rubric.slug}`).join('') : ''
       return fetch(
-        `/api/v1/groups/?page=${page}&limit=${limit}${rubricsString}`,
+        `/api/v1/groups/?page=${page}&limit=${limit}${teacher ? `&teacher=${teacher}` : ''}${rubricsString}`,
         {
           method: 'GET',
           headers: {
@@ -203,10 +203,10 @@ class Api {
     ).then(this.checkResponse)
   }
 
-  addToFavorites ({ id }) {
+  addToJoinings ({ id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${id}/favorite/`,
+      `/api/v1/groups/${id}/join/`,
       {
         method: 'POST',
         headers: {
@@ -217,10 +217,10 @@ class Api {
     ).then(this.checkResponse)
   }
 
-  removeFromFavorites ({ id }) {
+  removeFromJoinings ({ id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${id}/favorite/`,
+      `/api/v1/groups/${id}/join/`,
       {
         method: 'DELETE',
         headers: {
