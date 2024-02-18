@@ -2,7 +2,7 @@ from django.shortcuts import render
 #from django.http import HttpResponse
 from typing import Any
 from django.db.models.query import QuerySet
-from .models import Stud_Group, Rubric, Student
+from .models import Stud_Group, Rubric
 from rest_framework import viewsets, mixins
 from .serializers import (
     Stud_GroupSerializer, 
@@ -16,7 +16,7 @@ from rest_framework.permissions import (
     AllowAny
     )
 from .permissions import (
-    IsAdminOrReadOnly, IsAdminOrAllowedTeacherOrReadOnly, IsAdminOrTeacher
+    IsAdminOrAllowedTeacherOrReadOnly, IsAdminOrTeacher
     )
 from rest_framework.pagination import PageNumberPagination
 from django.views.generic import ListView
@@ -57,11 +57,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 
-class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
-    pagination_class = PageNumberPagination
-    permission_classes = [IsAuthenticated, IsAdminOrTeacher]
+
 
 
 class CoursesView(ListView):

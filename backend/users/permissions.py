@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-
+'''
 class IsAdminOrOwner(permissions.BasePermission):
     
     def has_permission(self, request, view):
@@ -12,3 +12,4 @@ class IsAdminOrOwner(permissions.BasePermission):
         if request.method == "POST":
             return not(user.is_authenticated) or user.is_superuser
         return user.is_superuser or user == obj
+'''

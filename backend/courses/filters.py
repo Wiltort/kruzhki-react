@@ -1,9 +1,7 @@
 from django_filters.rest_framework import FilterSet, filters
 from .models import Rubric, Stud_Group
-from django.contrib.auth import get_user_model
+from users.models import User
 
-
-User = get_user_model()
 
 class RubricFilter(FilterSet):
     teacher = filters.ModelChoiceFilter(

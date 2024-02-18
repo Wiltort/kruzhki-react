@@ -1,13 +1,10 @@
 from rest_framework import serializers
-from .models import Rubric, Stud_Group, Student, Lesson, Schedule, Attending
+from .models import Rubric, Stud_Group, Lesson, Schedule, Attending
 from rest_framework.validators import UniqueTogetherValidator
 from users.serializers import CurrentUserSerializer
-from django.contrib.auth import get_user_model
+from users.models import User
 from drf_extra_fields.fields import Base64ImageField
 from django.db import transaction
-
-
-User = get_user_model()
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
@@ -36,14 +33,8 @@ class StudentSerializer(serializers.ModelSerializer):
     attending = AttendingSerializer(many = True, read_only = True)
 
     class Meta:
-        model = Student
-        fields = ('id', 'user', 'in_group', 'attending')
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Student.objects.all(),
-                fields = ['user', 'in_group']
-            )
-        ]
+        model = User
+        fields = ('id', 'stud_groups', 'attending')
 
 
 class RubricSerializer(serializers.ModelSerializer):
@@ -84,7 +75,7 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return Student.objects.filter(user=request.user, in_group=obj).exists()
+        return request.user == obj.students
     
     def get_is_teacher(self, obj):
         request = self.context.get('request')

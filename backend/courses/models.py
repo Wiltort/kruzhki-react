@@ -1,10 +1,6 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from users.models import User
 import datetime
-
-
-
-User = get_user_model()
 
 
 class Rubric(models.Model):
@@ -61,6 +57,11 @@ class Stud_Group(models.Model):
         db_index=True,
         related_name='stud_groups',
         verbose_name='Рубрика')
+    students = models.ManyToManyField(
+        User, 
+        related_name='stud_groups',
+        verbose_name='Студенты',
+        limit_choices_to={'is_staff': False})
     
     class Meta:
         verbose_name = 'Группа обучения'
@@ -68,28 +69,6 @@ class Stud_Group(models.Model):
     
     def __str__(self):
         return self.name
-    
-
-class Student(models.Model):
-    user = models.ForeignKey(
-        User, 
-        related_name='study',
-        limit_choices_to={'is_staff': False},
-        on_delete=models.PROTECT,
-        verbose_name='Обучающийся',
-        )
-    in_group = models.ManyToManyField(
-        Stud_Group, 
-        related_name='students',
-        verbose_name='Состоит в группе'
-        )
-    
-    class Meta:
-        verbose_name='Обучающийся'
-        verbose_name_plural='Обучающиеся'
-
-    def __str__(self):
-        return self.user.get_username()
 
 
 class Lesson(models.Model):
@@ -103,7 +82,7 @@ class Lesson(models.Model):
 class Attending(models.Model):
     lesson = models.ForeignKey(Lesson, related_name='attending', 
                                on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, related_name='attending',
+    student = models.ForeignKey(User, related_name='attending',
                                 on_delete=models.DO_NOTHING)
     is_present = models.BooleanField(verbose_name='Посещение')
     is_passed = models.BooleanField(verbose_name='Зачет')

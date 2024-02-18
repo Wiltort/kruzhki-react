@@ -1,10 +1,6 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
-#from courses.serializers import Stud_GroupSerializer, StudentSerializer
-
-
-User = get_user_model()
+from .models import User
 
 
 class CurrentUserSerializer(UserSerializer):
@@ -20,5 +16,7 @@ class CurrentUserSerializer(UserSerializer):
             'first_name',
             'last_name',
         )
+
+        #Добавить поля work_groups, student, joinings...
 
     

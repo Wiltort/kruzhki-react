@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Stud_Group, Student, Lesson, Attending, Schedule, Rubric
+from users.models import User
+from .models import Stud_Group, Lesson, Attending, Schedule, Rubric
 
 class RubricAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'image', 'slug')
@@ -11,12 +12,9 @@ class RubricAdmin(admin.ModelAdmin):
 
 
 class Stud_GroupAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'title', 'teacher', 'students')
+    list_display = ('pk', 'name', 'title', 'teacher')
     search_fields = ('name', 'teacher')
     list_filter = ('teacher', 'rubric')
-
-    def students(self, instance):
-        return Student.objects.filter(in_group=instance)
 
 
 #class StudentsAdmin(admin.ModelAdmin):
