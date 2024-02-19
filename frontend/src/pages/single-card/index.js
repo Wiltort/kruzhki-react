@@ -45,16 +45,18 @@ const SingleCard = ({ loadItem, updateOrders }) => {
     rubric,
     number_of_lessons,
     name,
+    title,
+    students,
     ingredients,
     description,
     is_joining,
-    is_in_shopping_cart
+    is_in_students
   } = recipe
   
   return <Main>
     <Container>
       <MetaTags>
-        <title>{name}</title>
+        <title>{name}. {title}</title>
         <meta name="description" content={`Продуктовый помощник - ${name}`} />
         <meta property="og:title" content={name} />
       </MetaTags>
@@ -63,6 +65,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
         <div className={styles["single-card__info"]}>
           <div className={styles["single-card__header-info"]}>
               <h1 className={styles["single-card__title"]}>{name}</h1>
+              
               {authContext && <Button
                 modifier='style_none'
                 clickHandler={_ => {
@@ -74,6 +77,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
           </div>
           <TagsContainer tags={rubric} />
           <div>
+          <h2 className={styles["single-card__text"]}>{title}</h2>
             <p className={styles['single-card__text']}><Icons.ClockIcon /> {number_of_lessons} ч.</p>
             <p className={styles['single-card__text_with_link']}>
               <div className={styles['single-card__text']}>
@@ -91,14 +95,13 @@ const SingleCard = ({ loadItem, updateOrders }) => {
             </p>
           </div>
           <div className={styles['single-card__buttons']}>
-            {authContext && <Button
+            {(authContext&&!is_in_students) && <Button
               className={styles['single-card__button']}
               modifier={is_joining ? 'style_light' : 'style_dark-blue'}
               clickHandler={_ => {
                 handleAddToCart({ id, toAdd: Number(!is_joining), callback: updateOrders })
               }}
-            >
-              
+            > 
             {is_joining ? <><Icons.DoneIcon color="#4A61DD"/>Заявка подана</> : <><Icons.PlusIcon /> Подать заявку</>}
             </Button>}
             {(userContext || {}).id !== teacher.id && authContext && <Button
@@ -111,7 +114,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               {teacher.is_subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
             </Button>}
           </div>
-          <Ingredients ingredients={ingredients} />
+          <Ingredients ingredients={is_in_students ? students : ''} />
           <Description description={description} />
         </div>
     </div>

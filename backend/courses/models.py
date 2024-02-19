@@ -117,7 +117,7 @@ class Joining(models.Model):
         on_delete=models.CASCADE,
         related_name = 'joining_to',
         verbose_name='Заявки на курсы',
-        limit_choises_to={'is_staff': False}
+        limit_choices_to={'is_staff': False}
         )
     group = models.ForeignKey(
         Stud_Group,
@@ -129,16 +129,13 @@ class Joining(models.Model):
         'Дата заявления',
         auto_now_add=True,
     )
-
+    
     class Meta:
         constraints = (
             models.UniqueConstraint(
-            fields=('user', 'group'),
-            name='unique_joining'
+                fields=('user', 'group'),
+                name='unique_joining'
             ),
-            models.CheckConstraint(
-                check=models.Q(user )
-            )
         )
         verbose_name = 'Заявка'
         verbose_name_plural = 'Заявки'

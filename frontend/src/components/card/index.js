@@ -54,7 +54,7 @@ const Card = ({
                 callback: updateOrders
               })
             }}
-            disabled={!authContext}
+            disabled={!authContext||is_in_students}
           >
             {is_joining ? <><Icons.DoneIcon />Заявка отправлена</> : <><Icons.PlusIcon fill='#4A61DD' /> Подать заявку</>}
           </Button>}

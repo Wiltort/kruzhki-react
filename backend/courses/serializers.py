@@ -34,7 +34,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'stud_groups', 'attending')
+        fields = ('id', 'stud_groups', 'attending', 'first_name', 'last_name')
 
 
 class RubricSerializer(serializers.ModelSerializer):
@@ -76,7 +76,9 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return request.user == obj.students
+        if request.user.is_staff:
+            return False
+        return request.user.stud_groups.filter(pk=obj.pk).exists()
     
     def get_is_teacher(self, obj):
         request = self.context.get('request')

@@ -13,4 +13,5 @@ router.register('v1/groups', GroupViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    #path('v1/groups/my', )
 ]

@@ -64,6 +64,8 @@ class GroupViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if model.objects.filter(group=group, user=user).exists():
             raise ValidationError('Заявка уже отправлена')
+        if user.stud_groups.filter(pk=group.pk).exists():
+            raise ValidationError('Уже в группе')
         model.objects.create(group=group, user=user)
         serializer=ShortGroupSerializer(group)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
