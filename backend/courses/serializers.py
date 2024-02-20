@@ -70,7 +70,8 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
         model = Stud_Group
         fields = ['id', 'name', 'title', 'teacher', 'description', 
                   'number_of_lessons', 'rubric', 'students', 'lessons',
-                  'schedule', 'image', 'is_teacher', 'is_in_students', 'is_joining']
+                  'schedule', 'image', 'is_teacher', 'is_in_students', 'is_joining',
+                  'begin_at']
 
     def get_is_in_students(self, obj):
         request = self.context.get('request')

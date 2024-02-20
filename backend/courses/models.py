@@ -1,6 +1,8 @@
 from django.db import models
 from users.models import User
 import datetime
+from django.core.validators import MinValueValidator
+from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 
 
 class Rubric(models.Model):
@@ -44,14 +46,26 @@ class Stud_Group(models.Model):
         max_length=150,
         help_text='Введите название курса'
         )
-    image = models.ImageField(upload_to='groups/', blank=True, null = True)
-    teacher = models.ForeignKey(User, on_delete=models.PROTECT, 
-                                related_name='work_groups', 
-                                verbose_name='Преподаватель', 
-                                limit_choices_to={'is_staff': True})
+    image = models.ImageField(
+        upload_to='groups/',
+        verbose_name='Изображение'
+        )
+    teacher = models.ForeignKey(
+        User, on_delete=models.PROTECT, 
+        related_name='work_groups', 
+        verbose_name='Преподаватель', 
+        limit_choices_to={'is_staff': True}
+        )
     description = models.TextField(verbose_name='Описание', 
                                    blank=True)
-    number_of_lessons = models.SmallIntegerField()
+    number_of_lessons = models.SmallIntegerField(
+        null=False,
+        verbose_name='Количество часов',
+        help_text='Введите количество часов',
+        validators=(
+            MinValueValidator(1, 'Минимальное значение: 1 час')
+        ),
+    )
     rubric = models.ManyToManyField(
         Rubric,
         db_index=True,
@@ -62,13 +76,15 @@ class Stud_Group(models.Model):
         related_name='stud_groups',
         verbose_name='Студенты',
         limit_choices_to={'is_staff': False})
-    #begin_at = models.DateField(
-    #    verbose_name='Начало обучения'
-    #)
+    begin_at = models.DateTimeField(
+        verbose_name='Начало обучения',
+        db_index=True
+    )
     
     class Meta:
         verbose_name = 'Группа обучения'
         verbose_name_plural = 'Группы обучения'
+        ordering = ('begin_at')
     
     def __str__(self):
         return self.name
@@ -77,7 +93,7 @@ class Stud_Group(models.Model):
 class Lesson(models.Model):
     stud_group = models.ForeignKey(Stud_Group, related_name='lessons',
                                    verbose_name='Занятия', 
-                                   on_delete=models.PROTECT)
+                                   on_delete=models.CASCADE)
     date = models.DateTimeField(verbose_name='Время и дата')
     topic = models.CharField(max_length=150)
     
@@ -103,11 +119,21 @@ class Schedule(models.Model):
         SATURDAY = 5, 'Суббота'
         SUNDAY = 6, 'Воскресенье'
 
+    class Rings(models.IntegerChoices):
+    
+
     group = models.ForeignKey(Stud_Group, related_name='schedule',
-                              on_delete=models.PROTECT)
+                              on_delete=models.CASCADE)
     day_of_week = models.SmallIntegerField(choices=Days.choices)
     duration = models.DurationField(default=datetime.timedelta(minutes=45))
     begin_at = models.TimeField()
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('group', 'day_of_week', 'begin_at')
+            )
+        )
 
 
 class Joining(models.Model):
@@ -129,7 +155,7 @@ class Joining(models.Model):
         'Дата заявления',
         auto_now_add=True,
     )
-    
+
     class Meta:
         constraints = (
             models.UniqueConstraint(
@@ -139,6 +165,14 @@ class Joining(models.Model):
         )
         verbose_name = 'Заявка'
         verbose_name_plural = 'Заявки'
+    
+    def clean(self):
+        errors = {}
+        if self.group.students.objects.filter(pk=self.user.pk).exists():
+            errors[NON_FIELD_ERRORS] = ValidationError('Уже в группе')
+        if errors:
+            raise ValidationError(errors)
+
 
     def __str__(self):
         return f'{self.user} submitted a request to join {self.group}'
