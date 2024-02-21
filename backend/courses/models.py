@@ -109,6 +109,17 @@ class Attending(models.Model):
                                       blank=True, null=True)
 
 
+class Rings(models.Model):
+    number = models.PositiveSmallIntegerField(
+        unique=True,
+        verbose_name='Номер урока',
+        validators=(
+            MinValueValidator(1, message='Номер урока начинается с 1'),
+            ),
+        )
+    begin_at = models.TimeField()
+
+
 class Schedule(models.Model):
     class Days(models.IntegerChoices):
         MONDAY = 0, 'Понедельник'
@@ -118,9 +129,6 @@ class Schedule(models.Model):
         FRIDAY = 4, 'Пятница'
         SATURDAY = 5, 'Суббота'
         SUNDAY = 6, 'Воскресенье'
-
-    class Rings(models.IntegerChoices):
-    
 
     group = models.ForeignKey(Stud_Group, related_name='schedule',
                               on_delete=models.CASCADE)

@@ -89,7 +89,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kruzhki.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -197,3 +196,5 @@ DJOSER = {
         'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
     }
 }
+
+DEFAULT_LESSON_DURATION = 45
