@@ -1,8 +1,11 @@
 from django.db import models
 from users.models import User
-import datetime
+import datetime as dt
 from django.core.validators import MinValueValidator
 from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
+from django.utils.timezone import now
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Rubric(models.Model):
@@ -48,7 +51,8 @@ class Stud_Group(models.Model):
         )
     image = models.ImageField(
         upload_to='groups/',
-        verbose_name='Изображение'
+        verbose_name='Изображение',
+        default='../media/groups/1706241413450.jpeg'
         )
     teacher = models.ForeignKey(
         User, on_delete=models.PROTECT, 
@@ -63,7 +67,7 @@ class Stud_Group(models.Model):
         verbose_name='Количество часов',
         help_text='Введите количество часов',
         validators=(
-            MinValueValidator(1, 'Минимальное значение: 1 час')
+            MinValueValidator(1, 'Минимальное значение: 1 час'),
         ),
     )
     rubric = models.ManyToManyField(
@@ -76,15 +80,16 @@ class Stud_Group(models.Model):
         related_name='stud_groups',
         verbose_name='Студенты',
         limit_choices_to={'is_staff': False})
-    begin_at = models.DateTimeField(
+    begin_at = models.DateField(
         verbose_name='Начало обучения',
-        db_index=True
+        db_index=True,
+        default=now().date()
     )
     
     class Meta:
         verbose_name = 'Группа обучения'
         verbose_name_plural = 'Группы обучения'
-        ordering = ('begin_at')
+        ordering = ('begin_at',)
     
     def __str__(self):
         return self.name
@@ -92,24 +97,38 @@ class Stud_Group(models.Model):
 
 class Lesson(models.Model):
     stud_group = models.ForeignKey(Stud_Group, related_name='lessons',
-                                   verbose_name='Занятия', 
+                                   verbose_name='Урок', 
                                    on_delete=models.CASCADE)
-    date = models.DateTimeField(verbose_name='Время и дата')
-    topic = models.CharField(max_length=150)
+    ldate = models.DateTimeField(verbose_name='Время и дата')
+    topic = models.CharField(max_length=250, default = 'Введите тему урока')
+    class Meta:
+        verbose_name = 'Урок'
+        verbose_name_plural = 'Уроки'
+        ordering = ('ldate',)
+    
+    def __str__(self):
+        return f'{self.ldate}'
     
 
 class Attending(models.Model):
     lesson = models.ForeignKey(Lesson, related_name='attending', 
-                               on_delete=models.CASCADE)
+                               on_delete=models.CASCADE,db_index=True)
     student = models.ForeignKey(User, related_name='attending',
                                 on_delete=models.DO_NOTHING)
-    is_present = models.BooleanField(verbose_name='Посещение')
-    is_passed = models.BooleanField(verbose_name='Зачет')
+    is_present = models.BooleanField(verbose_name='Посещение',
+                                     default=True)
+    is_passed = models.BooleanField(verbose_name='Зачет',
+                                    default=False)
     points = models.SmallIntegerField(verbose_name='Оценка', 
                                       blank=True, null=True)
+    
+    class Meta:
+        verbose_name = 'Отметки'
+        verbose_name_plural = 'Отметки'
+        ordering = ('student',)
 
 
-class Rings(models.Model):
+class Ring(models.Model):
     number = models.PositiveSmallIntegerField(
         unique=True,
         verbose_name='Номер урока',
@@ -117,10 +136,19 @@ class Rings(models.Model):
             MinValueValidator(1, message='Номер урока начинается с 1'),
             ),
         )
-    begin_at = models.TimeField()
+    begin_at = models.TimeField(verbose_name='Начало урока')
+    end_at = models.TimeField('Конец урока')
+    
+    class Meta:
+        verbose_name = 'Звонок'
+        verbose_name_plural = 'Звонки'
+        ordering = ('number',)
 
+    def __str__(self):
+        return f'{self.number}. {self.begin_at} - {self.end_at}'
 
-class Schedule(models.Model):
+    
+class Schedule_item(models.Model):
     class Days(models.IntegerChoices):
         MONDAY = 0, 'Понедельник'
         TUESDAY = 1, 'Вторник'
@@ -130,18 +158,82 @@ class Schedule(models.Model):
         SATURDAY = 5, 'Суббота'
         SUNDAY = 6, 'Воскресенье'
 
-    group = models.ForeignKey(Stud_Group, related_name='schedule',
-                              on_delete=models.CASCADE)
-    day_of_week = models.SmallIntegerField(choices=Days.choices)
-    duration = models.DurationField(default=datetime.timedelta(minutes=45))
-    begin_at = models.TimeField()
+    day_of_week = models.SmallIntegerField(
+        choices=Days.choices,
+        verbose_name='День недели'
+    )
+    btime = models.ForeignKey(
+        Ring, 
+        on_delete=models.DO_NOTHING,
+        related_name='planned_lessons',
+        verbose_name='Время урока'
+    )
+    template = models.ForeignKey(
+        'Schedule_template',
+        on_delete = models.CASCADE,
+        verbose_name='Шаблон',
+        related_name='items'
+    )
 
     class Meta:
         constraints = (
             models.UniqueConstraint(
-                fields=('group', 'day_of_week', 'begin_at')
-            )
+                fields=('day_of_week', 'btime','template'),
+                name='unique_item'
+            ),
         )
+        ordering = ('day_of_week', 'btime')
+        verbose_name = 'Урок'
+        verbose_name_plural = 'Уроки'
+
+
+class Schedule_template(models.Model):
+    group = models.ForeignKey(
+        Stud_Group,
+        on_delete=models.CASCADE,
+        related_name='schedule_templates',
+        verbose_name='Группа'
+        )
+    
+    def create_lessons(self, delete_lessons_not_in_template=True):
+        items = Schedule_item.objects.filter(template=self).all()
+        if not items:
+            return None
+        d = self.group.begin_at
+        wd = d.weekday()
+        items = sorted(items, key=lambda x: x.day_of_week < wd)
+        N = len(items)
+        if delete_lessons_not_in_template:
+            Lesson.objects.filter(stud_group=self.group).delete()
+        students=self.group.students.all()
+        for i in range(self.group.number_of_lessons):
+            j = i%N
+            if wd == items[j].day_of_week and j==0 and i!=0:
+                days = 7
+            else:
+                days=(items[j].day_of_week-wd)%7
+            d += dt.timedelta(days=days)
+            wd = d.weekday()
+            lesson = Lesson.objects.create(
+                stud_group=self.group,
+                ldate=dt.datetime.combine(d,items[j].btime.begin_at)
+            )
+            for student in students:
+                Attending.objects.get_or_create(
+                    lesson=lesson,
+                    student=student,
+                )
+        return Lesson.objects.prefetch_related('attending').filter(stud_group=self.group)
+
+    class Meta:
+        verbose_name = 'Недельное расписание'
+        verbose_name_plural = 'Недельные расписания'
+        ordering = ('group',)
+            
+
+@receiver(post_save, sender=Schedule_template)
+def update_lessons(sender, instance, **kwargs):
+    instance.create_lessons()
 
 
 class Joining(models.Model):

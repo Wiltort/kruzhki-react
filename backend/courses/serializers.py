@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Rubric, Stud_Group, Lesson, Schedule, Attending, Joining
+from .models import Rubric, Stud_Group, Lesson, Schedule_template, Attending, Joining
 from rest_framework.validators import UniqueTogetherValidator
 from users.serializers import CurrentUserSerializer
 from users.models import User
@@ -10,8 +10,8 @@ from django.db import transaction
 class ScheduleSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = Schedule
-        fields = ('id', 'group', 'day_of_week', 'duration', 'begin_at')
+        model = Schedule_template
+        fields = ('id', 'group')
 
 
 class AttendingSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class LessonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = ('id', 'stud_group', 'date', 'topic', 'attending')
+        fields = ('id', 'stud_group', 'ldate', 'topic', 'attending')
 
 
 class StudentSerializer(serializers.ModelSerializer):
