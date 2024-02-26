@@ -101,7 +101,14 @@ class Lesson(models.Model):
                                    on_delete=models.CASCADE)
     ldate = models.DateTimeField(verbose_name='Время и дата')
     topic = models.CharField(max_length=250, default = 'Введите тему урока')
+    
     class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('stud_group', 'ldate'),
+                name='un_lesson'
+            ),
+        )
         verbose_name = 'Урок'
         verbose_name_plural = 'Уроки'
         ordering = ('ldate',)
@@ -123,6 +130,12 @@ class Attending(models.Model):
                                       blank=True, null=True)
     
     class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('lesson', 'student'),
+                name='unique_attending'
+            ),
+        )
         verbose_name = 'Отметки'
         verbose_name_plural = 'Отметки'
         ordering = ('student',)
@@ -204,7 +217,7 @@ class Schedule_template(models.Model):
         items = sorted(items, key=lambda x: x.day_of_week < wd)
         N = len(items)
         if delete_lessons_not_in_template:
-            Lesson.objects.filter(stud_group=self.group).delete()
+            Lesson.objects.filter(stud_group=self.group).filter(ldate__bte=now().date()).delete()
         students=self.group.students.all()
         for i in range(self.group.number_of_lessons):
             j = i%N
@@ -226,14 +239,21 @@ class Schedule_template(models.Model):
         return Lesson.objects.prefetch_related('attending').filter(stud_group=self.group)
 
     class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('group',),
+                name='unique_schedule_template'
+            )
+        )
         verbose_name = 'Недельное расписание'
         verbose_name_plural = 'Недельные расписания'
         ordering = ('group',)
             
 
 @receiver(post_save, sender=Schedule_template)
-def update_lessons(sender, instance, **kwargs):
-    instance.create_lessons()
+def update_lessons(sender, instance, created, **kwargs):
+    if created:
+        instance.create_lessons()
 
 
 class Joining(models.Model):
