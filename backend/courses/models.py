@@ -100,7 +100,10 @@ class Lesson(models.Model):
                                    verbose_name='Урок', 
                                    on_delete=models.CASCADE)
     ldate = models.DateTimeField(verbose_name='Время и дата')
-    topic = models.CharField(max_length=250, default = 'Введите тему урока')
+    topic = models.CharField(
+        max_length=250, 
+        default = 'Введите тему урока',
+        verbose_name='Тема')
     
     class Meta:
         constraints = (
@@ -243,18 +246,12 @@ class Schedule_template(models.Model):
             models.UniqueConstraint(
                 fields=('group',),
                 name='unique_schedule_template'
-            )
+            ),
         )
         verbose_name = 'Недельное расписание'
         verbose_name_plural = 'Недельные расписания'
         ordering = ('group',)
             
-
-@receiver(post_save, sender=Schedule_template)
-def update_lessons(sender, instance, created, **kwargs):
-    if created:
-        instance.create_lessons()
-
 
 class Joining(models.Model):
 

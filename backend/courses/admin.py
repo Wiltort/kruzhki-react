@@ -1,9 +1,13 @@
 from django.contrib import admin
+from django.urls.resolvers import URLPattern
 from users.models import User
 from .models import (
     Stud_Group, Lesson, Attending, 
     Schedule_template, Rubric, Schedule_item,
     Ring)
+from django.urls import path
+from django.shortcuts import redirect
+
 
 
 class RubricInline(admin.TabularInline):
@@ -18,7 +22,10 @@ class RubricAdmin(admin.ModelAdmin):
     readonly_fields = ('groups',)
 
     def groups(self, instance):
-        return instance.stud_groups.all()
+        return ', '.join(
+            [g.name for g in Stud_Group.objects.filter(rubric=instance)[:3]]
+            )
+    groups.short_description = 'Группы'
 
 
 class Stud_GroupAdmin(admin.ModelAdmin):
@@ -60,6 +67,20 @@ class ScheduleAdmin(admin.ModelAdmin):
 
     def items(self,instance):
         return instance.items.all()
+    
+    def get_urls(self) -> list[URLPattern]:
+        urls = super().get_urls()
+        custom_urls = [
+            path('get/', self.admin_site.admin_view(self.get_schedule),name='schedule_view'),
+        ]
+        return custom_urls + urls
+    
+    def get_schedule(self, request):
+        if self.form.has_changed:
+            self.save_form(request=request,form=self.form,change=True)
+
+        return redirect(f'/admin/courses/schedule_template/{self}/change/')
+
 
 
 admin.site.register(Stud_Group, Stud_GroupAdmin)
