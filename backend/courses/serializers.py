@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from .models import Rubric, Stud_Group, Lesson, Schedule_template, Attending, Joining
+from .models import (
+    Rubric, Stud_Group, Lesson, Schedule_item,
+    Schedule_template, Attending, Joining,
+    )
 from rest_framework.validators import UniqueTogetherValidator
 from users.serializers import CurrentUserSerializer
 from users.models import User
@@ -7,11 +10,21 @@ from drf_extra_fields.fields import Base64ImageField
 from django.db import transaction
 
 
+class ScheduleItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schedule_item
+        fields = ('id', 'day_of_week', 'btime', 'template')
+
+
 class ScheduleSerializer(serializers.ModelSerializer):
+    items_set = ScheduleItemSerializer(many = True)
     
     class Meta:
         model = Schedule_template
-        fields = ('id', 'group')
+        fields = ('id', 'group', 'items_set')
+    
+    def create(self, validated_data):
+
 
 
 class AttendingSerializer(serializers.ModelSerializer):

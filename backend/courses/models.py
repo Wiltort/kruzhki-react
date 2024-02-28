@@ -122,7 +122,8 @@ class Lesson(models.Model):
 
 class Attending(models.Model):
     lesson = models.ForeignKey(Lesson, related_name='attending', 
-                               on_delete=models.CASCADE,db_index=True)
+                               on_delete=models.CASCADE,db_index=True,
+                               verbose_name='Урок')
     student = models.ForeignKey(User, related_name='attending',
                                 on_delete=models.DO_NOTHING)
     is_present = models.BooleanField(verbose_name='Посещение',
@@ -141,7 +142,7 @@ class Attending(models.Model):
         )
         verbose_name = 'Отметки'
         verbose_name_plural = 'Отметки'
-        ordering = ('student',)
+        ordering = ('student__last_name','student__first_name',)
 
 
 class Ring(models.Model):

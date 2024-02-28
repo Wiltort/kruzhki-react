@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Stud_Group, Rubric, Joining
+from .models import Stud_Group, Rubric, Joining, Schedule_template
 from rest_framework import viewsets, mixins, status
 from .serializers import (
     Stud_GroupSerializer, 
     RubricSerializer,
     AddStud_GroupSerializer,
-    ShortGroupSerializer
+    ShortGroupSerializer,
+    ScheduleSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -76,4 +77,11 @@ class GroupViewSet(viewsets.ModelViewSet):
         obj = get_object_or_404(model, group=group, user=user)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class ScheduleViewSet(viewsets.ModelViewSet):
+    queryset = Schedule_template.objects.all()
+    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly,)
+
+    
     
