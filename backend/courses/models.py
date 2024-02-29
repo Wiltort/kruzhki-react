@@ -242,6 +242,10 @@ class Schedule_template(models.Model):
                 )
         return Lesson.objects.prefetch_related('attending').filter(stud_group=self.group)
 
+    def delete_lessons(self):
+        Lesson.objects.filter(stud_group=self.group).filter(ldate__bte=now().date()).delete()
+        return self
+
     class Meta:
         constraints = (
             models.UniqueConstraint(

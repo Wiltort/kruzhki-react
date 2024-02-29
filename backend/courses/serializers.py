@@ -24,6 +24,17 @@ class ScheduleSerializer(serializers.ModelSerializer):
         fields = ('id', 'group', 'items_set')
     
     def create(self, validated_data):
+        if 'items_set' not in validated_data:
+            template = Schedule_template.create(**validated_data)
+            return template
+        items_set = validated_data.pop('items_set')
+        template = Schedule_template.objects.create(**validated_data)
+        for item in items_set:
+            current_item, status = Schedule_item.objects.get_or_create(**item, template=template)
+        template.create_lessons()
+        return template
+    
+    
 
 
 
