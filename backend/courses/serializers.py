@@ -182,3 +182,4 @@ class ShortGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stud_Group
         fields = ('id', 'name', 'title', 'image', 'number_of_lessons')
+        
