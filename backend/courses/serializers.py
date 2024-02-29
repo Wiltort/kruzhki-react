@@ -30,13 +30,22 @@ class ScheduleSerializer(serializers.ModelSerializer):
         items_set = validated_data.pop('items_set')
         template = Schedule_template.objects.create(**validated_data)
         for item in items_set:
-            current_item, status = Schedule_item.objects.get_or_create(**item, template=template)
+            Schedule_item.objects.get_or_create(**item, template=template)
         template.create_lessons()
         return template
     
+    def update(self, instance, validated_data):
+        instance.group = validated_data.get('group', instance.group)
+        instance.save()
+        if 'items_set' not in validated_data:
+            instance.delete_lessons()
+            return instance
+        items_set = validated_data.pop('items_set')
+        for item in items_set:
+            Schedule_item.objects.get_or_create(**item, template=instance)
+        instance.create_lessons()
+        return instance
     
-
-
 
 class AttendingSerializer(serializers.ModelSerializer):
 
