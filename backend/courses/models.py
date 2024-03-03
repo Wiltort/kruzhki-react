@@ -94,6 +94,14 @@ class Stud_Group(models.Model):
     def __str__(self):
         return self.name
 
+class Days(models.IntegerChoices):
+    MONDAY = 0, 'Понедельник'
+    TUESDAY = 1, 'Вторник'
+    WEDNESDAY = 2, 'Среда'
+    THURSDAY = 3, 'Четверг'
+    FRIDAY = 4, 'Пятница'
+    SATURDAY = 5, 'Суббота'
+    SUNDAY = 6, 'Воскресенье'
 
 class Lesson(models.Model):
     stud_group = models.ForeignKey(Stud_Group, related_name='lessons',
@@ -166,14 +174,6 @@ class Ring(models.Model):
 
     
 class Schedule_item(models.Model):
-    class Days(models.IntegerChoices):
-        MONDAY = 0, 'Понедельник'
-        TUESDAY = 1, 'Вторник'
-        WEDNESDAY = 2, 'Среда'
-        THURSDAY = 3, 'Четверг'
-        FRIDAY = 4, 'Пятница'
-        SATURDAY = 5, 'Суббота'
-        SUNDAY = 6, 'Воскресенье'
 
     day_of_week = models.SmallIntegerField(
         choices=Days.choices,
@@ -202,7 +202,7 @@ class Schedule_item(models.Model):
         ordering = ('day_of_week', 'btime')
         verbose_name = 'Урок'
         verbose_name_plural = 'Уроки'
-
+    
 
 class Schedule_template(models.Model):
     group = models.ForeignKey(
@@ -256,6 +256,10 @@ class Schedule_template(models.Model):
         verbose_name = 'Недельное расписание'
         verbose_name_plural = 'Недельные расписания'
         ordering = ('group',)
+
+    def __str__(self):
+        return self.group.title
+
             
 
 class Joining(models.Model):

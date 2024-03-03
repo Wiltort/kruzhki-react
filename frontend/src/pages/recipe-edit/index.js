@@ -26,21 +26,21 @@ const RecipeEdit = ({ onItemDelete }) => {
     setRecipeFileWasManuallyChanged
   ] = useState(false)
 
-  const [ ingredients, setIngredients ] = useState([])
-  const [ showIngredients, setShowIngredients ] = useState(false)
+  //const [ ingredients, setIngredients ] = useState([])
+  //const [ showIngredients, setShowIngredients ] = useState(false)
   const [ loading, setLoading ] = useState(true)
   const history = useHistory()
 
-  useEffect(_ => {
-    if (ingredientValue.name === '') {
-      return setIngredients([])
-    }
-    api
-      .getIngredients({ name: ingredientValue.name })
-      .then(ingredients => {
-        setIngredients(ingredients)
-      })
-  }, [ingredientValue.name])
+ // useEffect(_ => {
+ //   if (ingredientValue.name === '') {
+ //     return setIngredients([])
+ //   }
+ //   api
+ //     .getSchedule({ group: id })
+ //     .then(schedule => {
+ //       setIngredients(schedule)
+ //     })
+ // }, [ingredientValue.name])
 
   useEffect(_ => {
     api.getTags()
@@ -58,16 +58,16 @@ const RecipeEdit = ({ onItemDelete }) => {
       const {
         image,
         tags,
-        cooking_time,
+        number_of_lessons,
         name,
-        ingredients,
-        text
+        schedule,
+        description
       } = res
-      setRecipeText(text)
+      setRecipeText(description)
       setRecipeName(name)
-      setRecipeTime(cooking_time)
+      setRecipeTime(number_of_lessons)
       setRecipeFile(image)
-      setRecipeIngredients(ingredients)
+      //setRecipeIngredients(schedule)
 
 
       const tagsValueUpdated = value.map(item => {
@@ -78,23 +78,23 @@ const RecipeEdit = ({ onItemDelete }) => {
       setLoading(false)
     })
     .catch(err => {
-      history.push('/recipes')
+      history.push('/groups')
     })
   }, [value])
 
-  const handleIngredientAutofill = ({ id, name, measurement_unit }) => {
-    setIngredientValue({
-      ...ingredientValue,
-      id,
-      name,
-      measurement_unit
-    })
-  }
+  //const handleIngredientAutofill = ({ id, name, measurement_unit }) => {
+  //  setIngredientValue({
+   //   ...ingredientValue,
+   //   id,
+   //   name,
+    //  measurement_unit
+  //  })
+ // }
 
   const checkIfDisabled = () => {
     return recipeText === '' ||
     recipeName === '' ||
-    recipeIngredients.length === 0 ||
+    //recipeIngredients.length === 0 ||
     value.filter(item => item.value).length === 0 ||
     recipeTime === '' ||
     recipeFile === '' ||
@@ -116,10 +116,10 @@ const RecipeEdit = ({ onItemDelete }) => {
           const data = {
             text: recipeText,
             name: recipeName,
-            ingredients: recipeIngredients.map(item => ({
-              id: item.id,
-              amount: item.amount
-            })),
+            //ingredients: recipeIngredients.map(item => ({
+            //  id: item.id,
+             // amount: item.amount
+           // })),
             tags: value.filter(item => item.value).map(item => item.id),
             cooking_time: recipeTime,
             image: recipeFile,
@@ -128,7 +128,7 @@ const RecipeEdit = ({ onItemDelete }) => {
           api
             .updateRecipe(data, recipeFileWasManuallyChanged)
             .then(res => {
-              history.push(`/recipes/${id}`)
+              history.push(`/groups/${id}`)
             })
             .catch(err => {
               const { non_field_errors, ingredients, cooking_time } = err
@@ -136,12 +136,12 @@ const RecipeEdit = ({ onItemDelete }) => {
               if (non_field_errors) {
                 return alert(non_field_errors.join(', '))
               }
-              if (ingredients) {
-                return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length).map(item => {
-                  const error = item[Object.keys(item)[0]]
-                  return error && error.join(' ,')
-                })[0]}`)
-              }
+             // if (ingredients) {
+             //   return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length).map(item => {
+             //     const error = item[Object.keys(item)[0]]
+             //     return error && error.join(' ,')
+              //  })[0]}`)
+             // }
               if (cooking_time) {
                 return alert(`Время готовки: ${cooking_time[0]}`)
               }
@@ -176,42 +176,43 @@ const RecipeEdit = ({ onItemDelete }) => {
               className={styles.ingredientsNameInput}
               inputClassName={styles.ingredientsInput}
               labelClassName={styles.ingredientsLabel}
-              onChange={e => {
-                const value = e.target.value
-                setIngredientValue({
-                  ...ingredientValue,
-                  name: value
-                })
-              }}
-              onFocus={_ => {
-                setShowIngredients(true)
-              }}
-              value={ingredientValue.name}
+              //onChange={e => {
+              //  const value = e.target.value
+              //  setIngredientValue({
+              //    ...ingredientValue,
+              //    name: value
+              //  })
+              //}}
+              //onFocus={_ => {
+              //  setShowIngredients(true)
+              //}}
+              //value={ingredientValue.name}
             />
             <div className={styles.ingredientsAmountInputContainer}>
               <Input
                 className={styles.ingredientsAmountInput}
                 inputClassName={styles.ingredientsAmountValue}
-                onChange={e => {
-                  const value = e.target.value
-                  setIngredientValue({
-                    ...ingredientValue,
-                    amount: value
-                  })
-                }}
-                value={ingredientValue.amount}
+                //onChange={e => {
+                //  const value = e.target.value
+                 // setIngredientValue({
+                //    ...ingredientValue,
+                //    amount: value
+                //  })
+               // }}
+               // value={ingredientValue.amount}
               />
-              {ingredientValue.measurement_unit !== '' && <div className={styles.measurementUnit}>{ingredientValue.measurement_unit}</div>}
+              {/*ingredientValue.measurement_unit !== '' && <div className={styles.measurementUnit}>{ingredientValue.measurement_unit}</div>*/}
             </div>
-            {showIngredients && ingredients.length > 0 && <IngredientsSearch
+         {/*   {showIngredients && ingredients.length > 0 && <IngredientsSearch
               ingredients={ingredients}
               onClick={({ id, name, measurement_unit }) => {
                 handleIngredientAutofill({ id, name, measurement_unit })
                 setIngredients([])
                 setShowIngredients(false)
               }}
-            />}
+            />} */}
           </div>
+          {/*
           <div className={styles.ingredientsAdded}>
             {recipeIngredients.map(item => {
               return <div
@@ -243,7 +244,7 @@ const RecipeEdit = ({ onItemDelete }) => {
             }}
           >
             Добавить ингредиент
-          </div>
+          </div> */}
         </div>
         <div className={styles.cookingTime}>
           <Input
@@ -290,7 +291,7 @@ const RecipeEdit = ({ onItemDelete }) => {
               api.deleteRecipe({ recipe_id: id })
                 .then(res => {
                   onItemDelete && onItemDelete()
-                  history.push('/recipes')
+                  history.push('/groups')
                 })
             }}
           >

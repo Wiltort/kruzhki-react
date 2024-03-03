@@ -10,6 +10,7 @@ import MetaTags from 'react-meta-tags'
 
 import { useRecipe } from '../../utils/index.js'
 import api from '../../api'
+import Schedule from './schedule'
 
 const SingleCard = ({ loadItem, updateOrders }) => {
   const [ loading, setLoading ] = useState(true)
@@ -47,10 +48,12 @@ const SingleCard = ({ loadItem, updateOrders }) => {
     name,
     title,
     students,
-    ingredients,
     description,
     is_joining,
-    is_in_students
+    is_in_students,
+    is_staff,
+    begin_at,
+    schedule_templates
   } = recipe
   
   return <Main>
@@ -89,13 +92,13 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               </div>
               {(userContext || {}).id === teacher.id && <LinkComponent
                 href={`${url}/edit`}
-                title='Редактировать рецепт'
+                title='Редактировать группу'
                 className={styles['single-card__edit']}
               />}
             </p>
           </div>
           <div className={styles['single-card__buttons']}>
-            {(authContext&&!is_in_students) && <Button
+            {(authContext&&!is_in_students&&!is_staff) && <Button
               className={styles['single-card__button']}
               modifier={is_joining ? 'style_light' : 'style_dark-blue'}
               clickHandler={_ => {
@@ -104,7 +107,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
             > 
             {is_joining ? <><Icons.DoneIcon color="#4A61DD"/>Заявка подана</> : <><Icons.PlusIcon /> Подать заявку</>}
             </Button>}
-            {(userContext || {}).id !== teacher.id && authContext && <Button
+            {(userContext || {}).id == teacher.id && authContext && <Button
               className={styles['single-card__button']}
               modifier='style_light-blue'
               clickHandler={_ => {
@@ -114,8 +117,12 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               {teacher.is_subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
             </Button>}
           </div>
-          <Ingredients ingredients={is_in_students ? students : ''} />
+          <Ingredients ingredients={is_in_students || (userContext || {}).id === teacher.id ? students : ''} />
           <Description description={description} />
+          <div className={styles['single-card__text']}>
+            Начало занятий: {begin_at}
+          </div>
+          <Schedule items={schedule_templates} />
         </div>
     </div>
     </Container>

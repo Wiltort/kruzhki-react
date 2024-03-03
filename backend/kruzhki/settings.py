@@ -32,11 +32,7 @@ SECRET_KEY = os.getenv(
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "web"
-    "localhost",
-    "127.0.0.1",
-    "[::1]",
-    "testserver",
+    '*'
 ]
 
 
@@ -153,11 +149,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
-
 REST_FRAMEWORK = {
+    "DATE_INPUT_FORMATS": ["%d.%m.%Y"],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated', 
     ],

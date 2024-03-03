@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from .models import (
     Rubric, Stud_Group, Lesson, Schedule_item,
-    Schedule_template, Attending, Joining,
-    )
+    Schedule_template, Attending, Joining, Days, Ring)
 from rest_framework.validators import UniqueTogetherValidator
 from users.serializers import CurrentUserSerializer
 from users.models import User
@@ -10,24 +9,33 @@ from drf_extra_fields.fields import Base64ImageField
 from django.db import transaction
 
 
+class RingSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+
+
 class ScheduleItemSerializer(serializers.ModelSerializer):
+    day_of_week = serializers.SerializerMethodField(method_name='weekday')
+    btime = serializers.ReadOnlyField(source = 'btime.begin_at')
+    etime = serializers.ReadOnlyField(source = 'btime.end_at')
     class Meta:
         model = Schedule_item
-        fields = ('id', 'day_of_week', 'btime', 'template')
-
+        fields = ('id', 'day_of_week', 'btime', 'etime', 'template')
+    def weekday(self, obj):
+        return Days(obj.day_of_week).label
 
 class ScheduleSerializer(serializers.ModelSerializer):
-    items_set = ScheduleItemSerializer(many = True)
+    items = ScheduleItemSerializer(many = True)
     
     class Meta:
         model = Schedule_template
-        fields = ('id', 'group', 'items_set')
+        fields = ('id', 'group', 'items')
     
     def create(self, validated_data):
-        if 'items_set' not in validated_data:
+        if 'items' not in validated_data:
             template = Schedule_template.create(**validated_data)
             return template
-        items_set = validated_data.pop('items_set')
+        items_set = validated_data.pop('items')
         template = Schedule_template.objects.create(**validated_data)
         for item in items_set:
             Schedule_item.objects.get_or_create(**item, template=template)
@@ -37,10 +45,10 @@ class ScheduleSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.group = validated_data.get('group', instance.group)
         instance.save()
-        if 'items_set' not in validated_data:
+        if 'items' not in validated_data:
             instance.delete_lessons()
             return instance
-        items_set = validated_data.pop('items_set')
+        items_set = validated_data.pop('items')
         for item in items_set:
             Schedule_item.objects.get_or_create(**item, template=instance)
         instance.create_lessons()
@@ -89,7 +97,7 @@ class RubricField(serializers.SlugRelatedField):
 class Stud_GroupSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many = True, read_only = True)
     lessons = LessonSerializer(many = True, read_only = True)
-    schedule = ScheduleSerializer(many = True, read_only = True)
+    schedule_templates = ScheduleSerializer(many = True, read_only = True)
     teacher = CurrentUserSerializer()
     rubric = RubricField(
         slug_field='id', queryset=Rubric.objects.all(), many=True
@@ -98,13 +106,13 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
     is_teacher = serializers.SerializerMethodField(method_name='get_is_teacher')
     is_joining = serializers.SerializerMethodField(method_name='get_is_joining')
     image = Base64ImageField()
-
+    is_staff = serializers.SerializerMethodField(method_name='get_is_staff')
     class Meta:
         model = Stud_Group
         fields = ['id', 'name', 'title', 'teacher', 'description', 
                   'number_of_lessons', 'rubric', 'students', 'lessons',
-                  'schedule', 'image', 'is_teacher', 'is_in_students', 'is_joining',
-                  'begin_at']
+                  'schedule_templates', 'image', 'is_teacher', 'is_in_students', 'is_joining',
+                  'begin_at', 'is_staff']
 
     def get_is_in_students(self, obj):
         request = self.context.get('request')
@@ -126,10 +134,18 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
             return False
         return Joining.objects.filter(user=request.user, group=obj).exists()
 
+    def get_is_staff(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        if request.user.is_staff:
+            return True
+
 
 class AddStud_GroupSerializer(serializers.ModelSerializer):
     rubric = serializers.PrimaryKeyRelatedField(
         queryset=Rubric.objects.all(),
+        many = True
     )
     image = Base64ImageField(max_length=None)
 
@@ -141,7 +157,8 @@ class AddStud_GroupSerializer(serializers.ModelSerializer):
             'title',
             'image',
             'description',
-            'number_of_lessons'
+            'number_of_lessons',
+            'begin_at'
         )
     
     def to_representation(self, instance):

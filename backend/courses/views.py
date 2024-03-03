@@ -17,7 +17,7 @@ from .permissions import (IsAdminOrAllowedTeacherOrReadOnly, IsAdminOrTeacher)
 from django.views.generic import ListView
 from .pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import RubricFilter
+from .filters import RubricFilter, ScheduleFilter
 from rest_framework.decorators import action
 from rest_framework.validators import ValidationError
 from rest_framework.response import Response
@@ -81,7 +81,9 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule_template.objects.all()
-    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly,)
+    serializer_class = ScheduleSerializer
+    permission_classes = (IsAdminOrTeacher,)
+    filterset_class = ScheduleFilter
 
     
     

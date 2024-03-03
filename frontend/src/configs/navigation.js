@@ -9,7 +9,7 @@ export default [
     auth: true
   },{
     title: 'Создать рецепт',
-    href: '/recipes/create',
+    href: '/groups/create',
     auth: true
   },{
     title: 'Избранное',

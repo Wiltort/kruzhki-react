@@ -1,5 +1,5 @@
 from django_filters.rest_framework import FilterSet, filters
-from .models import Rubric, Stud_Group, Attending
+from .models import Rubric, Stud_Group, Attending, Schedule_template
 from users.models import User
 from django.utils import timezone
 
@@ -53,3 +53,13 @@ class AttendingFilter(FilterSet):
         if self.request.user.is_authenticated and value is True:
                 return queryset.filter(id = self.request.user.attending.id)
         return queryset
+    
+class ScheduleFilter(FilterSet):
+    group = filters.ModelChoiceFilter(
+        queryset=Schedule_template.objects.all(),
+        field_name='group__id',
+        to_field_name='id',
+    )
+    class Meta:
+        model = Schedule_template
+        fields = ('group',)

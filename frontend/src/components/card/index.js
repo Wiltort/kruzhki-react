@@ -6,10 +6,12 @@ import { AuthContext } from '../../contexts'
 const Card = ({
   name = 'Без названия',
   id,
+  title,
   image,
   is_joining,
   is_in_students,
-  is_in_shopping_cart,
+  is_teacher,
+  is_staff,
   rubric,
   number_of_lessons,
   teacher = {},
@@ -28,8 +30,9 @@ const Card = ({
         <LinkComponent
           className={styles.card__title}
           href={`/groups/${id}`}
-          title={name}
+          title={title}
         />
+
         <TagsContainer tags={rubric} />
         <div className={styles.card__time}>
           <Icons.ClockIcon /> {number_of_lessons} ч.
@@ -44,7 +47,7 @@ const Card = ({
       </div>
       
       <div className={styles.card__footer}>
-          {authContext && <Button
+          {authContext && !is_staff && <Button
             className={styles.card__add}
             modifier={is_joining ? 'style_light' : 'style_light-blue'}
             clickHandler={_ => {
@@ -58,7 +61,7 @@ const Card = ({
           >
             {is_joining ? <><Icons.DoneIcon />Заявка отправлена</> : <><Icons.PlusIcon fill='#4A61DD' /> Подать заявку</>}
           </Button>}
-          
+          {authContext && is_teacher ? <p>Вы куратор этой группы</p>: <></>}
           {authContext && <Button
             modifier='style_none'
             clickHandler={_ => {

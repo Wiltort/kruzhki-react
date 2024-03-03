@@ -106,8 +106,10 @@ class Api {
   getRecipes ({
     page = 1,
     limit = 6,
-    is_favorited = 0,
-    is_in_shopping_cart = 0,
+    is_teacher,
+    is_staff,
+    //is_favorited = 0,
+    //is_in_shopping_cart = 0,
     teacher,
     rubric
   } = {}) {
@@ -145,15 +147,17 @@ class Api {
 
   createRecipe ({
     name = '',
+    title = '',
     image,
-    tags = [],
-    cooking_time = 0,
-    text = '',
-    ingredients = []
+    rubric = [],
+    number_of_lessons = 0,
+    description = '',
+    begin_at
+    //ingredients = []
   }) {
     const token = localStorage.getItem('token')
     return fetch(
-      '/api/recipes/',
+      '/api/v1/groups/',
       {
         method: 'POST',
         headers: {
@@ -162,11 +166,12 @@ class Api {
         },
         body: JSON.stringify({
           name,
+          title,
           image,
-          tags,
-          cooking_time,
-          text,
-          ingredients
+          rubric,
+          number_of_lessons,
+          description,
+          begin_at
         })
       }
     ).then(this.checkResponse)
@@ -175,15 +180,15 @@ class Api {
   updateRecipe ({
     name,
     recipe_id,
+    title,
     image,
-    tags,
-    cooking_time,
-    text,
-    ingredients
+    rubric,
+    number_of_lessons,
+    description
   }, wasImageUpdated) { // image was changed
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${recipe_id}/`,
+      `/api/v1/groups/${recipe_id}/`,
       {
         method: 'PATCH',
         headers: {
@@ -193,11 +198,11 @@ class Api {
         body: JSON.stringify({
           name,
           id: recipe_id,
+          title,
           image: wasImageUpdated ? image : undefined,
-          tags,
-          cooking_time: Number(cooking_time),
-          text,
-          ingredients
+          rubric,
+          number_of_lessons: Number(number_of_lessons),
+          description
         })
       }
     ).then(this.checkResponse)
@@ -315,10 +320,10 @@ class Api {
   }
 
   // ingredients
-  getIngredients ({ name }) {
+  getSchedule ({ group }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/ingredients/?name=${name}`,
+      `/api/v1/schedules/?group=${group}`,
       {
         method: 'GET',
         headers: {

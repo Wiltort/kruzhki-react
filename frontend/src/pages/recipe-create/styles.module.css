@@ -25,6 +25,16 @@
   margin-left: 20px;
 }
 
+.dateinput {
+  display: flex;
+  flex-direction: column;
+}
+
+.dateinput input {
+  width: 40px;
+  text-align: center;
+}
+
 .cookingTime {
   display: flex;
 }

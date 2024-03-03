@@ -214,14 +214,14 @@ function App() {
 
           <ProtectedRoute
             exact
-            path='/recipes/create'
+            path='/groups/create'
             component={RecipeCreate}
             loggedIn={loggedIn}
           />
 
           <ProtectedRoute
             exact
-            path='/recipes/:id/edit'
+            path='/groups/:id/edit'
             component={RecipeEdit}
             loggedIn={loggedIn}
             loadItem={loadSingleItem}
