@@ -1,6 +1,5 @@
 import {
   Container,
-  IngredientsSearch,
   FileInput,
   Input,
   Title,
@@ -17,7 +16,7 @@ import { useEffect, useState } from "react";
 import { useTags } from "../../utils";
 import { useHistory } from "react-router-dom";
 import MetaTags from "react-meta-tags";
-//import DatePicker from 'react-date-picker';
+
 
 
 const RecipeCreate = ({ onEdit }) => {

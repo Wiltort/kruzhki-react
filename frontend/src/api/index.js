@@ -184,7 +184,8 @@ class Api {
     image,
     rubric,
     number_of_lessons,
-    description
+    description,
+    begin_at
   }, wasImageUpdated) { // image was changed
     const token = localStorage.getItem('token')
     return fetch(
@@ -202,7 +203,8 @@ class Api {
           image: wasImageUpdated ? image : undefined,
           rubric,
           number_of_lessons: Number(number_of_lessons),
-          description
+          description,
+          begin_at
         })
       }
     ).then(this.checkResponse)
@@ -379,7 +381,7 @@ class Api {
   deleteRecipe ({ recipe_id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${recipe_id}/`,
+      `/api/v1/groups/${recipe_id}/`,
       {
         method: 'DELETE',
         headers: {

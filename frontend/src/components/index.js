@@ -25,6 +25,7 @@ import Subscription from './subscription'
 import SubscriptionList from './subscription-list'
 import FileInput from './file-input'
 import IngredientsSearch from './ingredients-search'
+import WeekTable from './weektable'
 
 export {
   Header,
@@ -53,5 +54,6 @@ export {
   Subscription,
   SubscriptionList,
   FileInput,
-  IngredientsSearch
+  IngredientsSearch,
+  WeekTable
 }

@@ -27,7 +27,7 @@ function App() {
 
   return (
     <div>
-      <Table items={items} onSelect={handleChange} />
+      <WeekTable items={items} onSelect={handleChange} />
     </div>
   );
 }

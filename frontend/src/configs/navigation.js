@@ -4,20 +4,16 @@ export default [
     href: '/groups',
     auth: false
   },{
-    title: 'Мои подписки',
-    href: '/subscriptions',
+    title: 'Мои группы',
+    href: '/my-groups',
     auth: true
   },{
-    title: 'Создать рецепт',
-    href: '/groups/create',
+    title: 'Moё расписание',
+    href: '/my-schedule',
     auth: true
   },{
-    title: 'Избранное',
-    href: '/favorites',
-    auth: true
-  }, {
-    title: 'Список покупок',
-    href: '/cart',
+    title: 'Уведомления',
+    href: '/notifications',
     auth: true
   }
 ]
