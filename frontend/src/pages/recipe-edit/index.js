@@ -62,12 +62,13 @@ const RecipeEdit = ({ onItemDelete }) => {
       setRecipeTime(number_of_lessons)
       setRecipeFile(image)
       setGrTitle(title)
+      setDate(begin_at)
 
       //setRecipeIngredients(schedule)
 
 
       const tagsValueUpdated = value.map(item => {
-        item.value = Boolean(tags.find(tag => tag.id === item.id))
+        item.value = Boolean(rubric.find(tag => tag.id === item.id))
         return item
       })
       setValue(tagsValueUpdated)

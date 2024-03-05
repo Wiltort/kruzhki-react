@@ -309,13 +309,15 @@ class Message(models.Model):
         User, 
         on_delete=models.DO_NOTHING,
         blank=True,
-        none=True,
-        verbose_name='Отправитель'
+        null=True,
+        verbose_name='Отправитель',
+        related_name='sended_messages'
     )
     to = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Получатель'
+        verbose_name='Получатель',
+        related_name='incoming_messages'
     )
     topic = models.CharField(
         max_length=250,

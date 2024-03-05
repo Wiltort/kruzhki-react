@@ -62,14 +62,7 @@ const Card = ({
             {is_joining ? <><Icons.DoneIcon />Заявка отправлена</> : <><Icons.PlusIcon fill='#4A61DD' /> Подать заявку</>}
           </Button>}
           {authContext && is_teacher ? <p>Вы куратор этой группы</p>: <></>}
-          {authContext && <Button
-            modifier='style_none'
-            clickHandler={_ => {
-              handleLike({ id, toLike: Number(!is_joining) })
-            }}
-          >
-            {is_joining ? <Icons.StarActiveIcon /> : <Icons.StarIcon />}
-          </Button>}
+
       </div>
   </div>
 }

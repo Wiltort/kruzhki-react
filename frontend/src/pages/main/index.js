@@ -1,9 +1,20 @@
-import { Card, Title, Pagination, CardList, Container, Main, CheckboxGroup  } from '../../components'
+import { 
+  Card, 
+  Title, 
+  Pagination, 
+  CardList, 
+  Container, 
+  Main, 
+  CheckboxGroup,
+  Button
+  } from '../../components'
 import styles from './styles.module.css'
 import { useRecipes } from '../../utils/index.js'
-import { useEffect } from 'react'
+import { useEffect, useContext, useState } from 'react'
 import api from '../../api'
 import MetaTags from 'react-meta-tags'
+import { AuthContext, UserContext } from '../../contexts'
+
 
 const HomePage = ({ updateOrders }) => {
   const {
@@ -15,11 +26,24 @@ const HomePage = ({ updateOrders }) => {
     setRecipesPage,
     tagsValue,
     setTagsValue,
-    is_staff,
     handleTagsChange,
     handleLike,
     handleAddToCart,
   } = useRecipes()
+
+  const authContext = useContext(AuthContext)
+  const userContext = useContext(UserContext)
+  const [ user, setUser ] = useState(null)
+  const [ isStaff, setIsStaff ] = useState(false)
+
+
+  const getUser = () => {
+    api.getUserData()
+      .then(res => {
+        setUser(res)
+        setIsStaff(res.is_staff)
+      })
+  }
 
 
   const getRecipes = ({ page = 1, rubric }) => {
@@ -35,6 +59,10 @@ const HomePage = ({ updateOrders }) => {
   useEffect(_ => {
     getRecipes({ page: recipesPage, rubric: tagsValue })
   }, [recipesPage, tagsValue])
+
+  useEffect(_ => {
+    getUser()
+  }, [])
 
   useEffect(_ => {
     api.getTags()
@@ -71,12 +99,12 @@ const HomePage = ({ updateOrders }) => {
         />)}
       </CardList>
       <dev>
-      { authContext && is_staff && <Button
+      { authContext && isStaff && <Button
               className={styles['single-card__button']}
               modifier='style_light-blue'
               href='groups/create'
             >
-              'Добавить новую группу'
+              Добавить новую группу
             </Button>}
       </dev>
       <Pagination

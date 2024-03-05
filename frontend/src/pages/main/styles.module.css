@@ -10,3 +10,8 @@
     display: block;
   }
 }
+.single-card__button {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+}
