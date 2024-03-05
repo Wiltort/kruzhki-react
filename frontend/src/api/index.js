@@ -335,6 +335,20 @@ class Api {
     ).then(this.checkResponse)
   }
 
+  
+  getRings () {
+    const token = localStorage.getItem('token')
+    return fetch(
+      `/api/v1/rings`,
+      {
+        method: 'GET',
+        headers: {
+          ...this._headers
+        }
+      }
+    ).then(this.checkResponse)
+  }
+
   // tags
   getTags () {
     const token = localStorage.getItem('token')

@@ -302,3 +302,38 @@ class Joining(models.Model):
 
     def __str__(self):
         return f'{self.user} submitted a request to join {self.group}'
+    
+
+class Message(models.Model):
+    sender = models.ForeignKey(
+        User, 
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        none=True,
+        verbose_name='Отправитель'
+    )
+    to = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Получатель'
+    )
+    topic = models.CharField(
+        max_length=250,
+        default='',
+        verbose_name='Тема'
+    )
+    text = models.TextField(
+        verbose_name='Текст'
+    )
+    date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время отправки'
+    )
+
+    class Meta:
+        verbose_name = 'Сообщение'
+        verbose_name_plural = 'Сообщения'
+        ordering = ('-date',)
+    
+    def __str__(self):
+        return f'Message from {self.sender} to {self.to} at {self.date}'

@@ -1,19 +1,31 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Stud_Group, Rubric, Joining, Schedule_template
+from .models import (
+    Stud_Group, 
+    Rubric, 
+    Joining, 
+    Schedule_template,
+    Ring
+    )
 from rest_framework import viewsets, mixins, status
 from .serializers import (
     Stud_GroupSerializer, 
     RubricSerializer,
     AddStud_GroupSerializer,
     ShortGroupSerializer,
-    ScheduleSerializer
+    ScheduleSerializer,
+    RingSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
     IsAuthenticated,
-    AllowAny
+    AllowAny,
     )
-from .permissions import (IsAdminOrAllowedTeacherOrReadOnly, IsAdminOrTeacher)
+from .permissions import (
+    IsAdminOrAllowedTeacherOrReadOnly,
+    IsAdminOrTeacher,
+    IsAdminOrReadOnly,
+    IsAdminOrTeacherOrReadOnly
+    )
 from django.views.generic import ListView
 from .pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
@@ -82,8 +94,13 @@ class GroupViewSet(viewsets.ModelViewSet):
 class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule_template.objects.all()
     serializer_class = ScheduleSerializer
-    permission_classes = (IsAdminOrTeacher,)
+    permission_classes = (IsAdminOrTeacherOrReadOnly,)
     filterset_class = ScheduleFilter
 
+
+class RingViewSet(viewsets.ModelViewSet):
+    queryset = Ring.objects.all()
+    serializer_class = RingSerializer
+    permission_classes = (IsAdminOrReadOnly,)
     
     

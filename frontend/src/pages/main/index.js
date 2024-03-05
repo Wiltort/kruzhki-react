@@ -15,9 +15,10 @@ const HomePage = ({ updateOrders }) => {
     setRecipesPage,
     tagsValue,
     setTagsValue,
+    is_staff,
     handleTagsChange,
     handleLike,
-    handleAddToCart
+    handleAddToCart,
   } = useRecipes()
 
 
@@ -69,6 +70,15 @@ const HomePage = ({ updateOrders }) => {
           handleAddToCart={handleAddToCart}
         />)}
       </CardList>
+      <dev>
+      { authContext && is_staff && <Button
+              className={styles['single-card__button']}
+              modifier='style_light-blue'
+              href='groups/create'
+            >
+              'Добавить новую группу'
+            </Button>}
+      </dev>
       <Pagination
         count={recipesCount}
         limit={6}
