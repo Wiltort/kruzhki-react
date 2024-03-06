@@ -4,7 +4,8 @@ from .models import (
     Rubric, 
     Joining, 
     Schedule_template,
-    Ring
+    Ring,
+    Message
     )
 from rest_framework import viewsets, mixins, status
 from .serializers import (
@@ -13,7 +14,9 @@ from .serializers import (
     AddStud_GroupSerializer,
     ShortGroupSerializer,
     ScheduleSerializer,
-    RingSerializer
+    RingSerializer,
+    GetMessageSerializer,
+    AddMessageSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -29,7 +32,7 @@ from .permissions import (
 from django.views.generic import ListView
 from .pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import RubricFilter, ScheduleFilter
+from .filters import RubricFilter, ScheduleFilter, JoiningFilter
 from rest_framework.decorators import action
 from rest_framework.validators import ValidationError
 from rest_framework.response import Response
@@ -103,4 +106,16 @@ class RingViewSet(viewsets.ModelViewSet):
     serializer_class = RingSerializer
     permission_classes = (IsAdminOrReadOnly,)
     
+class JoiningViewSet(viewsets.ModelViewSet):
+    queryset = Joining.objects.all()
+    permission_classes = (IsAdminOrTeacher,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_classes = JoiningFilter
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return GetMessageSerializer
+        return AddMessageSerializer
     
+    def get_queryset(self):
+        return super().get_queryset()

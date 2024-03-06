@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import (
     Rubric, Stud_Group, Lesson, Schedule_item,
-    Schedule_template, Attending, Joining, Days, Ring)
+    Schedule_template, Attending, Joining, Days, Ring, Message)
 from rest_framework.validators import UniqueTogetherValidator
 from users.serializers import CurrentUserSerializer
 from users.models import User
@@ -11,6 +11,7 @@ from django.db import transaction
 
 class RingSerializer(serializers.ModelSerializer):
     class Meta:
+        model = Ring
         fields = '__all__'
 
 
@@ -31,6 +32,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         model = Schedule_template
         fields = ('id', 'group', 'items')
     
+    @transaction.atomic
     def create(self, validated_data):
         if 'items' not in validated_data:
             template = Schedule_template.create(**validated_data)
@@ -41,7 +43,8 @@ class ScheduleSerializer(serializers.ModelSerializer):
             Schedule_item.objects.get_or_create(**item, template=template)
         template.create_lessons()
         return template
-    
+
+    @transaction.atomic    
     def update(self, instance, validated_data):
         instance.group = validated_data.get('group', instance.group)
         instance.save()
@@ -171,6 +174,7 @@ class AddStud_GroupSerializer(serializers.ModelSerializer):
         st_group = Stud_Group.objects.create(**validated_data)
         st_group.rubric.set(rubric)
         st_group.save()
+        Schedule_template.objects.create(group=st_group)
         #self.create... создать расписание и уроки
         return st_group
     
@@ -179,6 +183,8 @@ class AddStud_GroupSerializer(serializers.ModelSerializer):
         rubric = validated_data.pop('rubric')
         instance.rubric.clear()
         instance.rubric.set(rubric)
+        if not Schedule_template.objects.filter(group=instance).exists():
+            Schedule_template.objects.create(group=instance)
         return super().update(instance, validated_data)
     
     def validate(self, data):
@@ -199,4 +205,33 @@ class ShortGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stud_Group
         fields = ('id', 'name', 'title', 'image', 'number_of_lessons')
-        
+
+
+class AddMessageSerializer(serializers.ModelSerializer):
+    to = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all()
+    )
+    class Meta:
+        model = Message
+        fields = ('sender', 'to', 'topic', 'text')
+    
+class GetMessageSerializer(serializers.ModelSerializer):
+    sender = CurrentUserSerializer()
+    
+    class Meta:
+        model = Message
+        fields = ('sender', 'topic', 'text', 'date')
+
+
+class JoiningSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.filter(is_staff=False)
+    )
+    group = serializers.PrimaryKeyRelatedField(
+        queryset=Stud_Group.objects.all()
+    )
+    
+    class Meta:
+        model = Joining
+        fields = ('user', 'group', 'date')
+    

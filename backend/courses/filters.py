@@ -1,5 +1,5 @@
 from django_filters.rest_framework import FilterSet, filters
-from .models import Rubric, Stud_Group, Attending, Schedule_template
+from .models import Rubric, Stud_Group, Attending, Schedule_template, Joining
 from users.models import User
 from django.utils import timezone
 
@@ -56,10 +56,20 @@ class AttendingFilter(FilterSet):
     
 class ScheduleFilter(FilterSet):
     group = filters.ModelChoiceFilter(
-        queryset=Schedule_template.objects.all(),
+        queryset=Stud_Group.objects.all(),
         field_name='group__id',
         to_field_name='id',
     )
     class Meta:
         model = Schedule_template
         fields = ('group',)
+
+class JoiningFilter(FilterSet):
+    group = filters.ModelChoiceField(
+        queryset=Stud_Group.objects.all(),
+        field_name='group__id',
+        to_field_name='id'
+    )
+    class Meta:
+         model=Joining
+         fields=('group',)
