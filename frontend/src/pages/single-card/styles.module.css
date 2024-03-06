@@ -17,6 +17,7 @@
   display: flex;
   align-items: center;
   margin-right: 16px;
+  margin-bottom: 16px;
 }
 
 .single-card__button svg {
@@ -106,6 +107,9 @@
 
   .single-card__button {
     margin-bottom: 16px;
+  }
+  .single-card__bottom-cards {
+    
   }
 }
 

@@ -12,7 +12,7 @@ router.register('v1/groups', GroupViewSet)
 router.register('v1/schedules', ScheduleViewSet)
 router.register('v1/rings', RingViewSet)
 router.register('v1/joinings', JoiningViewSet)
-router.register('v1/messages', MessageViewSet)
+router.register('v1/messages', MessageViewSet, basename='messages')
 
 
 urlpatterns = [

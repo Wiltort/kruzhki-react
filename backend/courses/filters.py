@@ -65,7 +65,7 @@ class ScheduleFilter(FilterSet):
         fields = ('group',)
 
 class JoiningFilter(FilterSet):
-    group = filters.ModelChoiceField(
+    group = filters.ModelChoiceFilter(
         queryset=Stud_Group.objects.all(),
         field_name='group__id',
         to_field_name='id'
