@@ -16,7 +16,8 @@ from .serializers import (
     ScheduleSerializer,
     RingSerializer,
     GetMessageSerializer,
-    AddMessageSerializer
+    AddMessageSerializer,
+    JoiningSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -60,7 +61,6 @@ class GroupViewSet(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return Stud_GroupSerializer
         return AddStud_GroupSerializer
-    
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(teacher=user)
@@ -111,11 +111,76 @@ class JoiningViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrTeacher,)
     filter_backends = (DjangoFilterBackend,)
     filterset_classes = JoiningFilter
+    serializer_class = JoiningSerializer
+    
+    def get_queryset(self):
+        queryset = super(JoiningViewSet, self).get_queryset()
+        userId = self.request.user.id
+        queryset = queryset.objects.filter(group__teacher__id=userId)
+        return queryset
+    
+    @action(
+        detail=True,
+        methods=('delete',),
+        permission_classes=(IsAdminOrTeacher)
+        )
+    def accept(self, request, pk=None):
+        joining = get_object_or_404(Joining, pk=pk)
+        student = joining.user
+        group = joining.group
+        if student in group.students.all():
+            raise ValidationError('Уже в группе!')
+        if request.user != group.teacher:
+            raise ValidationError('Это не ваша группа!')
+        Message.objects.create(
+            sender = request.user,
+            to = student,
+            topic='Вы приняты!',
+            text=f'Здравствуйте, {student.first_name}!\nПоздравляем, вы приняты'\
+                f' в группу {group.name} - "{group.title}".\nС уважением, '\
+                f'{request.user.first_name} {request.user.last_name}.'
+        )
+        group.students.add(student)
+        joining.objects.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    @action(
+        detail=True,
+        methods=('delete',),
+        permission_classes=(IsAdminOrTeacher)
+        )
+    def reject(self, request, pk=None):
+        joining = get_object_or_404(Joining, pk=pk)
+        student = joining.user
+        group = joining.group
+        if student in group.students.all():
+            raise ValidationError('Уже в группе!')
+        if request.user != group.teacher:
+            raise ValidationError('Это не ваша группа!')
+        Message.objects.create(
+            sender = request.user,
+            to = student,
+            topic='Вам отказано',
+            text=f'Здравствуйте, {student.first_name}!\nК сожалению, мы не можем'\
+                f' принять Вас в группу {group.name} - "{group.title}".\nС уважением, '\
+                f'{request.user.first_name} {request.user.last_name}.'
+        )
+        joining.objects.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
+class MessageViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    
+    def get_queryset(self):
+        queryset = Message.objects.filter(to=self.request.user)
+        return queryset
+    
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return GetMessageSerializer
         return AddMessageSerializer
     
-    def get_queryset(self):
-        return super().get_queryset()
+    def perform_create(self, serializer):
+        sender = self.request.user
+        serializer.save(sender=sender)
+
+    
