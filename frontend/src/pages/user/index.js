@@ -37,14 +37,24 @@ const UserPage = ({ updateOrders }) => {
   const history = useHistory()
   const userContext = useContext(UserContext)
 
-  const getRecipes = ({ page = 1, tags }) => {
+  const getRecipesTeacher = ({ page = 1, tags }) => {
     api
-      .getRecipes({ page, author: id, tags })
+      .getRecipes({ page, teacher: id, tags })
         .then(res => {
           const { results, count } = res
           setRecipes(results)
           setRecipesCount(count)
         })
+  }
+
+  const getRecipesStudent = ({ page = 1, tags }) => {
+    api
+    .getRecipes({page, is_in_students: Number(true), tags })
+    .then(res => {
+      const { results, count } = res
+      setRecipes(results)
+      setRecipesCount(count)
+    })
   }
 
   const getUser = () => {
@@ -60,7 +70,11 @@ const UserPage = ({ updateOrders }) => {
 
   useEffect(_ => {
     if (!user) { return }
-    getRecipes({ page: recipesPage, tags: tagsValue, author: user.id })
+    if (user.is_staff){
+    getRecipesTeacher({ page: recipesPage, tags: tagsValue, teacher: user.id })}
+    else {
+      getRecipesStudent({ page: recipesPage, tags: tagsValue, })
+    }
   }, [ recipesPage, tagsValue, user ])
 
   useEffect(_ => {
@@ -109,7 +123,7 @@ const UserPage = ({ updateOrders }) => {
             })
         }}
       >
-        {subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
+        Написать сообщение пользователю
       </Button>}
       <CardList>
         {recipes.map(card => <Card

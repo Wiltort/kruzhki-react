@@ -129,16 +129,13 @@ function App() {
 
   const getOrders = () => {
     api
-      .getRecipes({
-        page: 1,
-        is_in_shopping_cart: Number(true)
-      })
+      .getUserData()
       .then(res => {
-        const { count } = res
-        setOrders(count)
+        setOrders(res.messages_number)
       })
   }
 
+  //это выбросить
   const updateOrders = (add) => {
     if (!add && orders <= 0) { return }
     if (add) {

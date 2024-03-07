@@ -108,8 +108,7 @@ class Api {
     limit = 6,
     is_teacher,
     is_staff,
-    //is_favorited = 0,
-    //is_in_shopping_cart = 0,
+    is_in_students=0,
     teacher,
     rubric
   } = {}) {
@@ -117,7 +116,7 @@ class Api {
       const authorization = token ? { 'authorization': `Token ${token}` } : {}
       const rubricsString = rubric ? rubric.filter(rubric => rubric.value).map(rubric => `&rubric=${rubric.slug}`).join('') : ''
       return fetch(
-        `/api/v1/groups/?page=${page}&limit=${limit}${teacher ? `&teacher=${teacher}` : ''}${rubricsString}`,
+        `/api/v1/groups/?page=${page}&limit=${limit}${teacher ? `&teacher=${teacher}` : ''}${rubricsString}${is_in_students ? `&is_in_students=${is_in_students}` : ''}`,
         {
           method: 'GET',
           headers: {
