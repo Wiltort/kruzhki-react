@@ -1,41 +1,36 @@
-import React from 'react';
-{/*Для решения этой задачи вам нужно будет создать компонент Table, который будет отображать расписание
- занятий.
- В каждой ячейке таблицы будет компонент Select, который позволит пользователю выбирать время занятия.
-Также вам нужно будет добавить возможность выбора нескольких занятий. Для этого вы можете использовать
- компоненты Checkbox или Radio.*/}
+import { useState, useContext, table } from "react";
+import { AuthContext } from "../../contexts";
 
-
-const WeekTable = ({ items, onSelect, Ring }) => {
-    return (
-      <table>
-        <thead>
+const WeekTable = ({ items, onSelect, Ring, days }) => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th key="MONDAY">Понедельник</th>
+          <th key="TUESDAY">Вторник</th>
+          <th key="WEDNESDAY">Среда</th>
+          <th key="THURSDAY">Четверг</th>
+          <th key="FRIDAY">Пятница</th>
+          <th key="SATURDAY">Суббота</th>
+          <th key="SUNDAY">Воскресение</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Ring.map((v, i) => (
           <tr>
-            <th>День недели</th>
-            <th>Время</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map(({ day_of_week, btime}, index) => (
-            <tr key={day_of_week}>
-              <td>{day_of_week}</td>
-              <td>
-                <select
-                  value={btime}
-                  onChange={(e) => onSelect(e, index)}
-                >
-                  {Ring.time_slots.map((time_slot) => (
-                    <option key={time_slot} value={time_slot}>
-                      {time_slot}
-                    </option>
-                  ))}
-                </select>
+            {days.map((val, ind) => (
+              <td 
+              key={val.name}
+              onClick={() => this.onSelect(val.ind,v.number)}
+              >
+                {v.number}. {v.begin_at} - {v.end_at}
               </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 export default WeekTable;

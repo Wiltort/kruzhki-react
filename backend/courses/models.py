@@ -294,7 +294,7 @@ class Joining(models.Model):
     
     def clean(self):
         errors = {}
-        if self.group.students.objects.filter(pk=self.user.pk).exists():
+        if self.group.students.filter(pk=self.user.pk).exists():
             errors[NON_FIELD_ERRORS] = ValidationError('Уже в группе')
         if errors:
             raise ValidationError(errors)

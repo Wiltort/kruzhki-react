@@ -36,7 +36,6 @@ const HomePage = ({ updateOrders }) => {
   const [ user, setUser ] = useState(null)
   const [ isStaff, setIsStaff ] = useState(false)
 
-
   const getUser = () => {
     api.getUserData()
       .then(res => {
@@ -44,7 +43,6 @@ const HomePage = ({ updateOrders }) => {
         setIsStaff(res.is_staff)
       })
   }
-
 
   const getRecipes = ({ page = 1, rubric }) => {
     api

@@ -7,6 +7,7 @@ import Cart from './cart'
 import Favorites from './favorites'
 import Subscriptions from './subscriptions'
 import RecipeCreate from './recipe-create'
+import ScheduleEdit from './schedule-edit'
 import User from './user'
 import ChangePassword from './change-password'
 
@@ -21,5 +22,6 @@ export {
   Subscriptions,
   RecipeCreate,
   User,
-  ChangePassword
+  ChangePassword,
+  ScheduleEdit
 }

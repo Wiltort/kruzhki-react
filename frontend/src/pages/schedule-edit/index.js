@@ -1,33 +1,77 @@
-{/*Для решения этой задачи вам нужно будет создать компонент Table, 
-который будет отображать расписание занятий. В каждой ячейке таблицы 
-будет компонент Select, который позволит пользователю выбирать время занятия.
-Также вам нужно будет добавить возможность выбора нескольких занятий. 
-Для этого вы можете использовать компоненты Checkbox или Radio.
-Пример кода:*/}
-import { useState } from "react"
-import { WeekTable } from '../../components'
+import { useState, useEffect } from "react";
+import { Form, Container, Input, Title, WeekTable, Textarea, Main, Button } from "../../components";
+import api from "../../api";
+import styles from "./styles.module.css";
+import { useParams, useHistory } from "react-router-dom";
 
-function App() {
-  const [items, setItems] = useState([
+const ScheduleEdit = () => {
+  const [items, setItems] = useState([]);
+  const days = [
     {
-      day: "Monday",
-      begin_at: "08:00",
+      ind: 0,
+      name: "MONDAY",
     },
     {
-      day: "Tuesday",
-      begin_at: "10:00",
-    }
-  ]);
+      ind: 1,
+      name: "TUESDAY",
+    },
+    {
+      ind: 2,
+      name: "WEDNESDAY",
+    },
+    {
+      ind: 3,
+      name: "THURSDAY",
+    },
+    {
+      ind: 4,
+      name: "FRIDAY",
+    },
+    {
+      ind: 5,
+      name: "SATURDAY",
+    },
+    {
+      ind: 6,
+      name: "SUNDAY",
+    },
+  ];
+  const [Rings, setRings] = useState([])
+  const history = useHistory()
+  const [ loading, setLoading ] = useState(true)
 
-  function handleChange(e, index) {
-    setItems(items.map((value, i) =>
-      i !== index ? value : { ...value, begin_at: e.target.value }
-    ));
-  }
+  useEffect((_) => {
+    api
+    .getRings()
+    .then((res) => {
+      setRings(res);
+    });
+  }, []);
 
+  const handleChange = ({ e, index }) => {
+    setItems(
+      items.map((value, i) =>
+        i !== index ? value : { ...value, begin_at: e.target.value }
+      )
+    );
+  };
+  const { id } = useParams()
+  useEffect(_ => {
+    if (value.length === 0 || !loading) { return }
+    api.getRecipe({
+      
+    })
+  })
   return (
     <div>
-      <WeekTable items={items} onSelect={handleChange} />
+      <WeekTable
+        items={items}
+        onSelect={handleChange}
+        Ring={Rings}
+        days={days}
+      />
     </div>
   );
-}
+};
+
+export default ScheduleEdit;

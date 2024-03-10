@@ -4,7 +4,7 @@ from users.models import User
 from .models import (
     Stud_Group, Lesson, Attending, 
     Schedule_template, Rubric, Schedule_item,
-    Ring, Joining)
+    Ring, Joining, Message)
 from django.urls import path
 from django.shortcuts import redirect
 
@@ -90,7 +90,10 @@ class JoiningAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'group', 'date')
     search_fields = ('group',)
     list_filter = ('user', 'group', 'group__teacher')
-    
+
+
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'sender', 'to', 'topic', 'text')
 
 admin.site.register(Stud_Group, Stud_GroupAdmin)
 admin.site.register(Lesson, LessonAdmin)
@@ -99,4 +102,5 @@ admin.site.register(Schedule_template, ScheduleAdmin)
 admin.site.register(Rubric, RubricAdmin)
 admin.site.register(Ring, RingAdmin)
 admin.site.register(Joining, JoiningAdmin)
+admin.site.register(Message, MessageAdmin)
 

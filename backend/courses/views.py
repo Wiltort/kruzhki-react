@@ -99,7 +99,12 @@ class ScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = ScheduleSerializer
     permission_classes = (IsAdminOrTeacherOrReadOnly,)
     filterset_class = ScheduleFilter
-
+    
+    def get_queryset(self):
+        id = self.request.kwargs.get('id')
+        group = get_object_or_404(Stud_Group, pk = id)
+        queryset = super(ScheduleViewSet,self).get_queryset()
+        
 
 class RingViewSet(viewsets.ModelViewSet):
     queryset = Ring.objects.all()

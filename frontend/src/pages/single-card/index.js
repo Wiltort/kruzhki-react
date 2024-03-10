@@ -135,7 +135,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
             </div>
             <Schedule items={schedule_templates} />
 
-            <div className={styles["single-card__bottom-cards"]}>{(userContext || {}).id == teacher.id && authContext && (
+            <div className={styles["single-card__text"]}>{(userContext || {}).id == teacher.id && authContext && (
               <Button
                 className={styles["single-card__button"]}
                 modifier="style_light-blue"
@@ -148,9 +148,9 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               <Button
                 className={styles["single-card__button"]}
                 modifier="style_light-blue"
-                href={`${url}/edit`}
+                href={`${url}/schedule`}
               >
-                {"Редактировать группу"}
+                {"Редактировать расписание"}
               </Button>
             )}
             </div>
