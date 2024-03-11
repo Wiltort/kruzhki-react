@@ -13,8 +13,16 @@ router.register('v1/schedules', ScheduleViewSet)
 router.register('v1/rings', RingViewSet)
 router.register('v1/joinings', JoiningViewSet)
 router.register('v1/messages', MessageViewSet, basename='messages')
-router.register(r'v1/(?P<id>\d+)/schedule' ,)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path(
+        'v1/groups/<int:pk>/schedule_items/', 
+         GroupViewSet.as_view(actions={'get': 'get_schedule_items'})
+    ),
+    path(
+        'v1/groups/<int:pk>/schedule_items/<int:item_pk>', 
+         GroupViewSet.as_view(actions={'delete': 'delete_item'})
+    ),
+    
 ]

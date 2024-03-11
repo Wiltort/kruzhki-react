@@ -5,7 +5,8 @@ from .models import (
     Joining, 
     Schedule_template,
     Ring,
-    Message
+    Message,
+    Schedule_item
     )
 from rest_framework import viewsets, mixins, status
 from .serializers import (
@@ -17,7 +18,8 @@ from .serializers import (
     RingSerializer,
     GetMessageSerializer,
     AddMessageSerializer,
-    JoiningSerializer
+    JoiningSerializer,
+    ScheduleItemSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -93,17 +95,41 @@ class GroupViewSet(viewsets.ModelViewSet):
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+    @action(
+        detail=False,
+        methods=['GET'],
+        permission_classes=(IsAuthenticated,)
+    )
+    def get_schedule_items(self, request, pk):
+        group = Stud_Group.objects.get(id=pk)
+        schedule, created = Schedule_template.objects.get_or_create(group=group)
+        items = schedule.items.all()
+        return Response(ScheduleItemSerializer(items, many=True).data)
+    
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
+    )
+    def delete_item(self, request, pk, item_pk):
+        item = get_object_or_404(Schedule_item, id = item_pk)
+        item.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule_template.objects.all()
     serializer_class = ScheduleSerializer
     permission_classes = (IsAdminOrTeacherOrReadOnly,)
     filterset_class = ScheduleFilter
-    
+
     def get_queryset(self):
-        id = self.request.kwargs.get('id')
-        group = get_object_or_404(Stud_Group, pk = id)
-        queryset = super(ScheduleViewSet,self).get_queryset()
+        queryset = super(ScheduleViewSet, self).get_queryset()
+        id = self.request.kwargs.get('group_id')
+        if id:
+            queryset = get_object_or_404(queryset, group__id=id)
+        else:
+            queryset = queryset.filter(group__teacher__id='')
+        return queryset
         
 
 class RingViewSet(viewsets.ModelViewSet):
