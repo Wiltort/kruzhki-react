@@ -19,7 +19,8 @@ from .serializers import (
     GetMessageSerializer,
     AddMessageSerializer,
     JoiningSerializer,
-    ScheduleItemSerializer
+    ScheduleItemSerializer,
+    AddScheduleItemSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -112,9 +113,27 @@ class GroupViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
     )
     def delete_item(self, request, pk, item_pk):
+        group = Stud_Group.objects.get(id = pk)
+        self.check_object_permissions(request=request,obj=group)
         item = get_object_or_404(Schedule_item, id = item_pk)
         item.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
+    
+    @action(
+        methods=['POST'],
+        detail=True,
+        permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
+    )
+    def create_item(self, request, pk):
+        group = Stud_Group.objects.get(id = pk)
+        self.check_object_permissions(request=request,obj=group)
+        serializer = AddScheduleItemSerializer(data=request.data)
+        template, created = Schedule_template.objects.get_or_create(group=group)
+        if serializer.is_valid():
+            serializer.save(template=template)
+        return None
+
+
 
 class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule_template.objects.all()

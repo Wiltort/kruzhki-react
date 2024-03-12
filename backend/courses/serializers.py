@@ -24,6 +24,12 @@ class ScheduleItemSerializer(serializers.ModelSerializer):
         fields = ('id', 'day_of_week', 'btime', 'etime', 'template')
     def weekday(self, obj):
         return Days(obj.day_of_week).label
+    
+
+class AddScheduleItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schedule_item
+        fields = ('day_of_week', 'btime')
 
 class ScheduleSerializer(serializers.ModelSerializer):
     items = ScheduleItemSerializer(many = True)
