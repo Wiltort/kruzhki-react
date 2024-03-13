@@ -29,7 +29,7 @@ class ScheduleItemSerializer(serializers.ModelSerializer):
 class AddScheduleItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule_item
-        fields = ('day_of_week', 'btime')
+        fields = ('day_of_week', 'btime', 'template')
 
 class ScheduleSerializer(serializers.ModelSerializer):
     items = ScheduleItemSerializer(many = True)
@@ -76,7 +76,7 @@ class LessonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = ('id', 'stud_group', 'ldate', 'topic', 'attending')
+        fields = ('id', 'ldate', 'topic', 'attending')
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -84,7 +84,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'stud_groups', 'attending', 'first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name')
 
 
 class RubricSerializer(serializers.ModelSerializer):
@@ -105,7 +105,6 @@ class RubricField(serializers.SlugRelatedField):
 
 class Stud_GroupSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many = True, read_only = True)
-    lessons = LessonSerializer(many = True, read_only = True)
     schedule_templates = ScheduleSerializer(many = True, read_only = True)
     teacher = CurrentUserSerializer()
     rubric = RubricField(
@@ -119,7 +118,7 @@ class Stud_GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stud_Group
         fields = ['id', 'name', 'title', 'teacher', 'description', 
-                  'number_of_lessons', 'rubric', 'students', 'lessons',
+                  'number_of_lessons', 'rubric', 'students',
                   'schedule_templates', 'image', 'is_teacher', 'is_in_students', 'is_joining',
                   'begin_at', 'is_staff']
 
@@ -240,4 +239,11 @@ class JoiningSerializer(serializers.ModelSerializer):
     class Meta:
         model = Joining
         fields = ('user', 'group', 'date')
-    
+
+
+class AttendingOfGroupSerializer(serializers.ModelSerializer):
+    students = StudentSerializer(many = True, read_only = True)
+    lessons = LessonSerializer(many = True, read_only = True)
+    class Meta:
+        model = Stud_Group
+        fields = ['id', 'name', 'title', 'teacher', 'students', 'image', 'begin_at']

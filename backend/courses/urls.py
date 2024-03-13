@@ -24,5 +24,17 @@ urlpatterns = [
         'v1/groups/<int:pk>/schedule_items/<int:item_pk>', 
          GroupViewSet.as_view(actions={'delete': 'delete_item'})
     ),
+    path(
+        'v1/groups/<int:pk>/schedule_items/',
+        GroupViewSet.as_view(actions={'post': 'create_item'})
+    ),
+    path(
+        'v1/groups/<int:pk>/schedule_items/<int:item_pk>', 
+         GroupViewSet.as_view(actions={'post': 'update_item'})
+    ),
+    path(
+        'v1/groups/<int:pk>/schedule_items/forming', 
+         GroupViewSet.as_view(actions={'get': 'create_lessons'})
+    ),
     
 ]

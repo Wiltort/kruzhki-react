@@ -20,7 +20,9 @@ from .serializers import (
     AddMessageSerializer,
     JoiningSerializer,
     ScheduleItemSerializer,
-    AddScheduleItemSerializer
+    AddScheduleItemSerializer,
+    LessonSerializer,
+    AttendingOfGroupSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -116,12 +118,14 @@ class GroupViewSet(viewsets.ModelViewSet):
         group = Stud_Group.objects.get(id = pk)
         self.check_object_permissions(request=request,obj=group)
         item = get_object_or_404(Schedule_item, id = item_pk)
+        if item.template.group != group:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         item.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
     
     @action(
         methods=['POST'],
-        detail=True,
+        detail=False,
         permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
     )
     def create_item(self, request, pk):
@@ -131,8 +135,39 @@ class GroupViewSet(viewsets.ModelViewSet):
         template, created = Schedule_template.objects.get_or_create(group=group)
         if serializer.is_valid():
             serializer.save(template=template)
-        return None
-
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(
+        methods=['POST', 'PUT', 'PATCH'],
+        detail=True,
+        permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
+    )
+    def update_item(self, request, pk, item_pk):
+        group = Stud_Group.objects.get(id=pk)
+        self.check_object_permissions(request=request,obj=group)
+        item = get_object_or_404(Schedule_item, id = item_pk)
+        if item.template.group != group:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        partial = (request.method in ['PUT','PATCH'])
+        serializer = AddScheduleItemSerializer(item, data=request.data, partial=partial)
+        template = Schedule_template.objects.get(group=group)
+        if serializer.is_valid():
+            serializer.save(template=template)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(
+        methods=['GET'],
+        detail=False,
+        permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
+    )
+    def create_lessons(self, request, pk):
+        group = Stud_Group.objects.get(id=pk)
+        self.check_object_permissions(request=request,obj=group)
+        template = Schedule_template.objects.get(group=group)
+        serializer = LessonSerializer(template.create_lessons())
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
@@ -155,7 +190,8 @@ class RingViewSet(viewsets.ModelViewSet):
     queryset = Ring.objects.all()
     serializer_class = RingSerializer
     permission_classes = (IsAdminOrReadOnly,)
-    
+
+
 class JoiningViewSet(viewsets.ModelViewSet):
     queryset = Joining.objects.all()
     permission_classes = (IsAdminOrTeacher,)
@@ -217,6 +253,7 @@ class JoiningViewSet(viewsets.ModelViewSet):
         joining.objects.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     
@@ -233,4 +270,13 @@ class MessageViewSet(viewsets.ModelViewSet):
         sender = self.request.user
         serializer.save(sender=sender)
 
+
+class AttendingOfGroupViewSet(viewsets.ModelViewSet):
+    queryset = Stud_Group.objects.all()
+    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly,)
+    serializer_class = AttendingOfGroupSerializer
     
+    @action(
+        
+    )
+
