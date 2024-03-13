@@ -221,7 +221,7 @@ class Schedule_template(models.Model):
         items = sorted(items, key=lambda x: x.day_of_week < wd)
         N = len(items)
         if delete_lessons_not_in_template:
-            Lesson.objects.filter(stud_group=self.group).filter(ldate__bte=now().date()).delete()
+            Lesson.objects.filter(stud_group=self.group).filter(ldate__gte=now().date()).delete()
         students=self.group.students.all()
         for i in range(self.group.number_of_lessons):
             j = i%N
@@ -231,7 +231,7 @@ class Schedule_template(models.Model):
                 days=(items[j].day_of_week-wd)%7
             d += dt.timedelta(days=days)
             wd = d.weekday()
-            lesson = Lesson.objects.create(
+            lesson, created = Lesson.objects.get_or_create(
                 stud_group=self.group,
                 ldate=dt.datetime.combine(d,items[j].btime.begin_at)
             )

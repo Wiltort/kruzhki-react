@@ -6,7 +6,8 @@ from .models import (
     Schedule_template,
     Ring,
     Message,
-    Schedule_item
+    Schedule_item,
+    Attending
     )
 from rest_framework import viewsets, mixins, status
 from .serializers import (
@@ -22,7 +23,8 @@ from .serializers import (
     ScheduleItemSerializer,
     AddScheduleItemSerializer,
     LessonSerializer,
-    AttendingOfGroupSerializer
+    AttendingOfGroupSerializer,
+    AttendingSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -158,7 +160,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(
-        methods=['GET'],
+        methods=['POST'],
         detail=False,
         permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
     )
@@ -166,23 +168,24 @@ class GroupViewSet(viewsets.ModelViewSet):
         group = Stud_Group.objects.get(id=pk)
         self.check_object_permissions(request=request,obj=group)
         template = Schedule_template.objects.get(group=group)
-        serializer = LessonSerializer(template.create_lessons())
+        template.create_lessons()
+        serializer = LessonSerializer(group.lessons, many=True)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule_template.objects.all()
     serializer_class = ScheduleSerializer
-    permission_classes = (IsAdminOrTeacherOrReadOnly,)
+    permission_classes = (IsAdminOrTeacherOrReadOnly, IsAuthenticated)
     filterset_class = ScheduleFilter
 
     def get_queryset(self):
         queryset = super(ScheduleViewSet, self).get_queryset()
-        id = self.request.kwargs.get('group_id')
-        if id:
-            queryset = get_object_or_404(queryset, group__id=id)
+        user = self.request.user
+        if user.is_staff:
+            queryset = queryset.filter(group__teacher=user)
         else:
-            queryset = queryset.filter(group__teacher__id='')
+            queryset = queryset.filter(group__students=user)
         return queryset
         
 
@@ -271,12 +274,21 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer.save(sender=sender)
 
 
-class AttendingOfGroupViewSet(viewsets.ModelViewSet):
+class AttendingOfGroupViewSet(
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Stud_Group.objects.all()
     permission_classes = (IsAdminOrAllowedTeacherOrReadOnly,)
     serializer_class = AttendingOfGroupSerializer
-    
-    @action(
-        
-    )
 
+class AttendingViewSet(viewsets.ModelViewSet):
+    queryset = Attending.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = AttendingSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            pk = self.request.kwargs.get('pk')
+        return super().get_queryset()
