@@ -1,7 +1,7 @@
 import styles from './styles.module.css'
 import cn from 'classnames'
 
-const ScheduleForm = ({ loggedIn, children, className, onSubmit }) => {
+const Form = ({ loggedIn, children, className, onSubmit }) => {
   return <form
     className={cn(styles.form, className)}
     onSubmit={onSubmit}
@@ -10,4 +10,4 @@ const ScheduleForm = ({ loggedIn, children, className, onSubmit }) => {
   </form>
 }
 
-export default ScheduleForm
+export default Form

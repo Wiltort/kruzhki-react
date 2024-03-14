@@ -30,7 +30,7 @@ urlpatterns = [
     ),
     path(
         'v1/groups/<int:pk>/schedule_items/<int:item_pk>', 
-         GroupViewSet.as_view(actions={'post': 'update_item'})
+         GroupViewSet.as_view(actions={'patch': 'update_item'})
     ),
     path(
         'v1/groups/<int:pk>/schedule_items/forming', 

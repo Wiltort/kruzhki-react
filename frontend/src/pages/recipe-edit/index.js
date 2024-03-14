@@ -8,32 +8,32 @@ import MetaTags from 'react-meta-tags'
 
 const RecipeEdit = ({ onItemDelete }) => {
   const { value, handleChange, setValue } = useTags()
-  const [ recipeName, setRecipeName ] = useState('')
-  const [ grTitle, setGrTitle ] = useState('')
-  const [ recipeText, setRecipeText ] = useState('')
-  const [ recipeTime, setRecipeTime ] = useState(0)
-  const [ recipeFile, setRecipeFile ] = useState(null)
+  const [recipeName, setRecipeName] = useState('')
+  const [grTitle, setGrTitle] = useState('')
+  const [recipeText, setRecipeText] = useState('')
+  const [recipeTime, setRecipeTime] = useState(0)
+  const [recipeFile, setRecipeFile] = useState(null)
   const [
     recipeFileWasManuallyChanged,
     setRecipeFileWasManuallyChanged
   ] = useState(false)
-  const [date, setDate ] = useState(new Date())
+  const [date, setDate] = useState(new Date())
 
   //const [ ingredients, setIngredients ] = useState([])
   //const [ showIngredients, setShowIngredients ] = useState(false)
-  const [ loading, setLoading ] = useState(true)
+  const [loading, setLoading] = useState(true)
   const history = useHistory()
 
- // useEffect(_ => {
- //   if (ingredientValue.name === '') {
- //     return setIngredients([])
- //   }
- //   api
- //     .getSchedule({ group: id })
- //     .then(schedule => {
- //       setIngredients(schedule)
- //     })
- // }, [ingredientValue.name])
+  // useEffect(_ => {
+  //   if (ingredientValue.name === '') {
+  //     return setIngredients([])
+  //   }
+  //   api
+  //     .getSchedule({ group: id })
+  //     .then(schedule => {
+  //       setIngredients(schedule)
+  //     })
+  // }, [ingredientValue.name])
 
   useEffect(_ => {
     api.getTags()
@@ -45,7 +45,7 @@ const RecipeEdit = ({ onItemDelete }) => {
   const { id } = useParams()
   useEffect(_ => {
     if (value.length === 0 || !loading) { return }
-    api.getRecipe ({
+    api.getRecipe({
       recipe_id: id
     }).then(res => {
       const {
@@ -74,28 +74,28 @@ const RecipeEdit = ({ onItemDelete }) => {
       setValue(tagsValueUpdated)
       setLoading(false)
     })
-    .catch(err => {
-      history.push('/groups')
-    })
+      .catch(err => {
+        history.push('/groups')
+      })
   }, [value])
 
   //const handleIngredientAutofill = ({ id, name, measurement_unit }) => {
   //  setIngredientValue({
-   //   ...ingredientValue,
-   //   id,
-   //   name,
-    //  measurement_unit
+  //   ...ingredientValue,
+  //   id,
+  //   name,
+  //  measurement_unit
   //  })
- // }
+  // }
 
   const checkIfDisabled = () => {
     return recipeText === '' ||
-    recipeName === '' ||
-    //recipeIngredients.length === 0 ||
-    value.filter(item => item.value).length === 0 ||
-    recipeTime === '' ||
-    recipeFile === '' ||
-    recipeFile === null
+      recipeName === '' ||
+      //recipeIngredients.length === 0 ||
+      value.filter(item => item.value).length === 0 ||
+      recipeTime === '' ||
+      recipeFile === '' ||
+      recipeFile === null
   }
 
   return <Main>
@@ -115,8 +115,8 @@ const RecipeEdit = ({ onItemDelete }) => {
             name: recipeName,
             //ingredients: recipeIngredients.map(item => ({
             //  id: item.id,
-             // amount: item.amount
-           // })),
+            // amount: item.amount
+            // })),
             rubric: value.filter(item => item.value).map(item => item.id),
             number_of_lessons: recipeTime,
             image: recipeFile,
@@ -134,12 +134,12 @@ const RecipeEdit = ({ onItemDelete }) => {
               if (non_field_errors) {
                 return alert(non_field_errors.join(', '))
               }
-             // if (ingredients) {
-             //   return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length).map(item => {
-             //     const error = item[Object.keys(item)[0]]
-             //     return error && error.join(' ,')
+              // if (ingredients) {
+              //   return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length).map(item => {
+              //     const error = item[Object.keys(item)[0]]
+              //     return error && error.join(' ,')
               //  })[0]}`)
-             // }
+              // }
               if (number_of_lessons) {
                 return alert(`Количество часов: ${number_of_lessons[0]}`)
               }
@@ -200,12 +200,12 @@ const RecipeEdit = ({ onItemDelete }) => {
           file={recipeFile}
         />
         <Input
-            label="Дата начала"
-            onChange={(e) => {
-              const value = e.target.value;
-              setDate(value);
-            }}
-            value={date}
+          label="Дата начала"
+          onChange={(e) => {
+            const value = e.target.value;
+            setDate(value);
+          }}
+          value={date}
         />
         <div className={styles.actions}>
           <Button

@@ -324,7 +324,7 @@ class Api {
   getSchedule ({ group_id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/v1/{group_id}/schedule`,
+      `/api/v1/groups/{group_id}/schedule_items/`,
       {
         method: 'GET',
         headers: {
