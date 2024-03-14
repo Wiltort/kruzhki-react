@@ -26,6 +26,7 @@ import SubscriptionList from './subscription-list'
 import FileInput from './file-input'
 import IngredientsSearch from './ingredients-search'
 import WeekTable from './weektable'
+import ScheduleForm from './form'
 
 export {
   Header,
@@ -55,5 +56,6 @@ export {
   SubscriptionList,
   FileInput,
   IngredientsSearch,
-  WeekTable
+  WeekTable,
+  ScheduleForm
 }

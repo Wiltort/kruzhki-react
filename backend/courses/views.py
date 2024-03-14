@@ -128,15 +128,15 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(
         methods=['POST'],
         detail=False,
-        permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
+        permission_classes=(IsAuthenticated,)
     )
     def create_item(self, request, pk):
         group = Stud_Group.objects.get(id = pk)
         self.check_object_permissions(request=request,obj=group)
-        serializer = AddScheduleItemSerializer(data=request.data)
+        serializer = AddScheduleItemSerializer(data=request.data, template=template)
         template, created = Schedule_template.objects.get_or_create(group=group)
         if serializer.is_valid():
-            serializer.save(template=template)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
