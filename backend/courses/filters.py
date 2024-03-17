@@ -15,14 +15,15 @@ class RubricFilter(FilterSet):
     is_in_students = filters.BooleanFilter(method='get_is_in_students')
     is_teacher = filters.BooleanFilter(method='get_is_teacher')
     not_beginned = filters.BooleanFilter(method='get_not_beginned')
-    
+    my = filters.BooleanFilter(method='get_my')
+
     class Meta:
         model = Stud_Group
         fields = ('rubric', 'teacher', 'is_in_students', 'is_teacher', 'begin_at')
 
     def get_is_in_students(self, queryset, name, value):
         if self.request.user.is_authenticated and value is True:
-                return queryset.filter(id = self.request.user.in_groups.id)
+                return queryset.filter(students = self.request.user)
         return queryset
         
     def get_is_teacher(self, queryset, name, value):
@@ -31,9 +32,18 @@ class RubricFilter(FilterSet):
         return queryset
     
     def get_not_beginned(self, queryset, name, value):
-         if value is True:
-              return queryset.filter(begin_at__gte=timezone.now())
-         return queryset
+        if value is True:
+            return queryset.filter(begin_at__gte=timezone.now())
+        return queryset
+    
+    def get_my(self, queryset, name, value):
+        user = self.request.user
+        if user.is_authenticated and value is True:
+            if user.is_staff:
+                return queryset.filter(teacher=user)
+            else: 
+                return queryset.filter(students=user)
+        return queryset
     
 
 class AttendingFilter(FilterSet):

@@ -18,7 +18,7 @@ class CurrentUserSerializer(UserSerializer):
             'last_name',
             'is_staff',
             'messages_number',
-            'password'
+            'password',
         )
         extra_kwargs = {'password': {'write_only': True},
                         'messages_number': {'read_only': True}}

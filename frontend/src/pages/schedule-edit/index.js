@@ -18,39 +18,39 @@ const ScheduleEdit = () => {
   const days = [
     {
       ind: 0,
-      name: "MONDAY",
+      name: "Понедельник",
     },
     {
       ind: 1,
-      name: "TUESDAY",
+      name: "Вторник",
     },
     {
       ind: 2,
-      name: "WEDNESDAY",
+      name: "Среда",
     },
     {
       ind: 3,
-      name: "THURSDAY",
+      name: "Четверг",
     },
     {
       ind: 4,
-      name: "FRIDAY",
+      name: "Пятница",
     },
     {
       ind: 5,
-      name: "SATURDAY",
+      name: "Суббота",
     },
     {
       ind: 6,
-      name: "SUNDAY",
+      name: "Воскресенье",
     },
   ];
   const [Rings, setRings] = useState([]);
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [addItem, setAddItem] = useState(false);
-  const [pole1,setPole1] = useState()
-  const [pole2,setPole2] = useState()
+  const [pole1, setPole1] = useState();
+  const [pole2, setPole2] = useState();
 
   useEffect((_) => {
     api.getRings().then((res) => {
@@ -64,7 +64,7 @@ const ScheduleEdit = () => {
   };
 
   const handleChangeForm = ({ item, index, e }) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
     if (name === "day") {
       item[index].day_of_week = value;
@@ -75,7 +75,19 @@ const ScheduleEdit = () => {
     setItems([...Items]);
   };
 
+  
   const { id } = useParams();
+  const getSchedule = (id) => {
+    api
+    .getSchedule({
+      group_id: id,
+    })
+    .then((res) => {
+      setItems(res);
+      setLoading(false);
+    });
+  }
+
   useEffect((_) => {
     if (!loading) {
       return;
@@ -93,10 +105,22 @@ const ScheduleEdit = () => {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    await api.createSchedule({day_of_week: pole1, btime: pole2, group_id: id});
+    await api.createSchedule({
+      day_of_week: pole1,
+      btime: pole2,
+      group_id: id,
+    });
+    setLoading(true);
+    getSchedule(id)
 
-    setItems([]);
-    setAddItem(false);
+  }
+  async function handleDelete(e) {
+    e.preventDefault();
+    await api.deleteSchedule({
+      group_id: id,
+    });
+    setLoading(true);
+    getSchedule(id)
   }
 
   return (
@@ -113,13 +137,17 @@ const ScheduleEdit = () => {
         <Title title="Редактирование расписания" />
 
         <ScheduleForm className={styles.form} onSubmit={handleSubmit}>
+          <h3>Занятия:</h3>
           {Items.map((item, i) => (
             <div key={i} style={{ marginTop: "10px" }}>
-              <div>{item.day_of_week}, {item.btime}</div>
+              <div>
+                {item.day_of_week}, {item.btime}
+              </div>
             </div>
           ))}
+              <h3>Добавить урок</h3>
 
-          {(
+          {
             <div
               style={{
                 display: "flex",
@@ -127,49 +155,45 @@ const ScheduleEdit = () => {
                 marginTop: "20px",
               }}
             >
-              
-              <label>Day</label>
-              <select
-                name="day"
-                onChange={e=> setPole1(e.target.value)}
-                
-              >
-                        <option defaultValue={''}>Выберите Базис</option>
+              <label>День недели:</label>
+              <select name="day" onChange={(e) => setPole1(e.target.value)}>
+                <option defaultValue={""}>Выберите день недели</option>
                 {days.map((day) => (
-                  <option key={day.ind} value={day.name}>
+                  <option key={day.ind} value={day.ind}>
                     {day.name}
                   </option>
                 ))}
               </select>
 
-              <label>Time</label>
-              <select
-                name="time"
-                onChange={e=> setPole2(e.target.value)}
-              
-              >
-                {Rings.map((Ring) => (  
+              <label>Урок:</label>
+              <select name="time" onChange={(e) => setPole2(e.target.value)}>
+                <option defaultValue={""}>Выберите номер урока</option>
+
+                {Rings.map((Ring) => (
                   <option key={Ring.id} value={Ring.id}>
-                    {Ring.begin_at}
+                    {Ring.number}. {Ring.begin_at} - {Ring.end_at}
                   </option>
                 ))}
               </select>
-              </div>
-)}
-              <button type="button" onClick={() => setAddItem(false)}>
-                Remove Item
-              </button>
-            
-          
+            </div>
+          }
+          <div className={styles.actions}>
 
-          
-          <Button
-            modifier='style_dark-blue'
-            //disabled={checkIfDisabled()}
-            className={styles.button}
-          >
-            Сохранить
-          </Button>
+
+            <Button
+              modifier="style_dark-blue"
+              //disabled={checkIfDisabled()}
+              className={styles.button}
+            >
+              Сохранить
+            </Button>
+            <div
+              className={styles.deleteRecipe}
+              onClick={handleDelete}
+            >
+              Удалить
+            </div>
+          </div>
         </ScheduleForm>
       </Container>
     </Main>

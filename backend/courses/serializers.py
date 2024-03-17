@@ -27,9 +27,13 @@ class ScheduleItemSerializer(serializers.ModelSerializer):
     
 
 class AddScheduleItemSerializer(serializers.ModelSerializer):
+    btime = serializers.PrimaryKeyRelatedField(
+        queryset=Ring.objects.all()
+    )
+    template = serializers.ReadOnlyField(source='template.id')
     class Meta:
         model = Schedule_item
-        fields = ('day_of_week', 'btime', 'template')
+        fields = ('day_of_week', 'btime','template')
 
 class ScheduleSerializer(serializers.ModelSerializer):
     items = ScheduleItemSerializer(many = True)

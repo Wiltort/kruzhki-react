@@ -18,22 +18,16 @@ urlpatterns = [
     path('', include(router.urls)),
     path(
         'v1/groups/<int:pk>/schedule_items/', 
-         GroupViewSet.as_view(actions={'get': 'get_schedule_items'})
-    ),
-    path(
-        'v1/groups/<int:pk>/schedule_items/<int:item_pk>', 
-         GroupViewSet.as_view(actions={'delete': 'delete_item'})
-    ),
-    path(
-        'v1/groups/<int:pk>/schedule_items/',
-        GroupViewSet.as_view(actions={'post': 'create_item'})
+         GroupViewSet.as_view(actions={'get': 'get_schedule_items',
+                                       'post': 'create_item',
+                                       'delete': 'delete_item'})
     ),
     path(
         'v1/groups/<int:pk>/schedule_items/<int:item_pk>', 
          GroupViewSet.as_view(actions={'patch': 'update_item'})
     ),
     path(
-        'v1/groups/<int:pk>/schedule_items/forming', 
+        'v1/groups/<int:pk>/forming', 
          GroupViewSet.as_view(actions={'post': 'create_lessons'})
     ),
     

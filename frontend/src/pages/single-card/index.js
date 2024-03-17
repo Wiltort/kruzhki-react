@@ -135,24 +135,37 @@ const SingleCard = ({ loadItem, updateOrders }) => {
             </div>
             <Schedule items={schedule_templates} />
 
-            <div className={styles["single-card__text"]}>{(userContext || {}).id == teacher.id && authContext && (
-              <Button
-                className={styles["single-card__button"]}
-                modifier="style_light-blue"
-                href={`${url}/edit`}
-              >
-                {"Редактировать группу"}
-              </Button>
-            )}
-            {(userContext || {}).id == teacher.id && authContext && (
-              <Button
-                className={styles["single-card__button"]}
-                modifier="style_light-blue"
-                href={`${url}/schedule`}
-              >
-                {"Редактировать расписание"}
-              </Button>
-            )}
+            <div className={styles["single-card__text"]}>
+              {(userContext || {}).id == teacher.id && authContext && (
+                <Button
+                  className={styles["single-card__button"]}
+                  modifier="style_light-blue"
+                  href={`${url}/edit`}
+                >
+                  {"Редактировать группу"}
+                </Button>
+              )}
+              {(userContext || {}).id == teacher.id && authContext && (
+                <Button
+                  className={styles["single-card__button"]}
+                  modifier="style_light-blue"
+                  href={`${url}/schedule`}
+                >
+                  {"Редактировать расписание"}
+                </Button>
+              )}
+              {(userContext || {}).id == teacher.id && authContext && (
+                <Button
+                  className={styles["single-card__button"]}
+                  modifier="style_light-blue"
+                  onClick={_ => {
+                    api.createLessons({group_id: id})
+                    .then(res => {history.push(`${url}/diary/`)})
+                  }}
+                >
+                  Сформировать занятия
+                </Button>
+              )}
             </div>
           </div>
         </div>

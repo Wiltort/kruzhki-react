@@ -19,7 +19,7 @@ const Nav = ({ loggedIn, orders }) => {
               exact
               className={styles.nav__link}
             />
-            {item.href === '/cart' && orders > 0 && <span className={styles['orders-count']}>{orders}</span>}
+            {item.href === '/notifications' && orders > 0 && <span className={styles['orders-count']}>{orders}</span>}
           </li>
         })}
       </ul>

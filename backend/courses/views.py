@@ -113,30 +113,30 @@ class GroupViewSet(viewsets.ModelViewSet):
     
     @action(
         methods=['DELETE'],
-        detail=True,
+        detail=False,
         permission_classes=(IsAdminOrAllowedTeacherOrReadOnly,)
     )
-    def delete_item(self, request, pk, item_pk):
+    def delete_item(self, request, pk):
         group = Stud_Group.objects.get(id = pk)
         self.check_object_permissions(request=request,obj=group)
-        item = get_object_or_404(Schedule_item, id = item_pk)
-        if item.template.group != group:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        item.delete()
-        return Response(status=status.HTTP_202_ACCEPTED)
+        template = Schedule_template.objects.get(group=group)
+        items = template.items.all()
+        for item in items:
+            item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
     @action(
         methods=['POST'],
-        detail=False,
+        detail=True,
         permission_classes=(IsAuthenticated,)
     )
     def create_item(self, request, pk):
         group = Stud_Group.objects.get(id = pk)
         self.check_object_permissions(request=request,obj=group)
-        serializer = AddScheduleItemSerializer(data=request.data, template=template)
         template, created = Schedule_template.objects.get_or_create(group=group)
+        serializer = AddScheduleItemSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(template=template)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

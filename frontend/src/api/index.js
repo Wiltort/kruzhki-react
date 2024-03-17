@@ -95,11 +95,12 @@ class Api {
   getRecipes({
     page = 1,
     limit = 6,
-    is_teacher,
+    is_teacher = 0,
     is_staff,
     is_in_students = 0,
     teacher,
     rubric,
+    my,
   } = {}) {
     const token = localStorage.getItem("token");
     const authorization = token ? { authorization: `Token ${token}` } : {};
@@ -114,7 +115,7 @@ class Api {
         teacher ? `&teacher=${teacher}` : ""
       }${rubricsString}${
         is_in_students ? `&is_in_students=${is_in_students}` : ""
-      }`,
+      }${ my ? `&my=${my}` : ""}`,
       {
         method: "GET",
         headers: {
@@ -308,6 +309,18 @@ class Api {
     }).then(this.checkResponse);
   }
 
+  deleteSchedule({ group_id }) {
+    const token = localStorage.getItem("token");
+    return fetch(`/api/v1/groups/${group_id}/schedule_items/`, {
+      method: "DELETE",
+      headers: {
+        ...this._headers,
+        authorization: `Token ${token}`,
+
+      },
+    }).then(this.checkResponse);
+  }
+
   getRings() {
     const token = localStorage.getItem("token");
     return fetch(`/api/v1/rings`, {
@@ -372,8 +385,20 @@ class Api {
       },
     }).then(this.checkFileDownloadResponse);
   }
-}
 
+
+createLessons({ group_id}) {
+  const token = localStorage.getItem("token");
+  return fetch(`/api/v1/groups/${group_id}/forming`, {
+    method: "POST",
+    headers: {
+      ...this._headers,
+      authorization: `Token ${token}`,
+    },
+  }).then(this.checkResponse);
+}
+}
 export default new Api(process.env.API_URL || "http://localhost", {
   "content-type": "application/json",
 });
+

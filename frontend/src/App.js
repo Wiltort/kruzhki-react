@@ -203,7 +203,7 @@ function App() {
 
           <ProtectedRoute
             exact
-            path='/favorites'
+            path='/my-groups'
             component={Favorites}
             loggedIn={loggedIn}
             updateOrders={updateOrders}
