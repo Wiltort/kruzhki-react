@@ -10,6 +10,7 @@ import RecipeCreate from './recipe-create'
 import ScheduleEdit from './schedule-edit'
 import User from './user'
 import ChangePassword from './change-password'
+import MySchedule from './my-schedule'
 
 export {
   Main,
@@ -23,5 +24,6 @@ export {
   RecipeCreate,
   User,
   ChangePassword,
-  ScheduleEdit
+  ScheduleEdit,
+  MySchedule
 }

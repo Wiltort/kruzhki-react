@@ -7,7 +7,8 @@ from .models import (
     Ring,
     Message,
     Schedule_item,
-    Attending
+    Attending,
+    Lesson
     )
 from rest_framework import viewsets, mixins, status
 from .serializers import (
@@ -189,6 +190,24 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         return queryset
         
 
+class LessonViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
+    queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
+    permission_classes = (IsAuthenticated,)
+    
+    def get_queryset(self):
+        queryset = super(LessonViewSet, self).get_queryset()
+        user = self.request.user
+        if user.is_staff:
+            queryset = queryset.filter(stud_group__teacher=user)
+        else:
+            queryset = queryset.filter(stud_group__students=user)
+        return queryset
+
 class RingViewSet(viewsets.ModelViewSet):
     queryset = Ring.objects.all()
     serializer_class = RingSerializer
@@ -281,6 +300,7 @@ class AttendingOfGroupViewSet(
     queryset = Stud_Group.objects.all()
     permission_classes = (IsAdminOrAllowedTeacherOrReadOnly,)
     serializer_class = AttendingOfGroupSerializer
+
 
 class AttendingViewSet(viewsets.ModelViewSet):
     queryset = Attending.objects.all()

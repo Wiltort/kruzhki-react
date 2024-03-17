@@ -115,7 +115,7 @@ class Api {
         teacher ? `&teacher=${teacher}` : ""
       }${rubricsString}${
         is_in_students ? `&is_in_students=${is_in_students}` : ""
-      }${ my ? `&my=${my}` : ""}`,
+      }${my ? `&my=${my}` : ""}`,
       {
         method: "GET",
         headers: {
@@ -316,7 +316,6 @@ class Api {
       headers: {
         ...this._headers,
         authorization: `Token ${token}`,
-
       },
     }).then(this.checkResponse);
   }
@@ -386,19 +385,28 @@ class Api {
     }).then(this.checkFileDownloadResponse);
   }
 
+  createLessons({ group_id }) {
+    const token = localStorage.getItem("token");
+    return fetch(`/api/v1/groups/${group_id}/forming`, {
+      method: "POST",
+      headers: {
+        ...this._headers,
+        authorization: `Token ${token}`,
+      },
+    }).then(this.checkResponse);
+  }
 
-createLessons({ group_id}) {
-  const token = localStorage.getItem("token");
-  return fetch(`/api/v1/groups/${group_id}/forming`, {
-    method: "POST",
-    headers: {
-      ...this._headers,
-      authorization: `Token ${token}`,
-    },
-  }).then(this.checkResponse);
-}
+  getLessons() {
+    const token = localStorage.getItem("token");
+    return fetch(`/api/v1/lessons`, {
+      method: "GET",
+      headers: {
+        ...this._headers,
+        authorization: `Token ${token}`,
+      },
+    }).then(this.checkResponse);
+  }
 }
 export default new Api(process.env.API_URL || "http://localhost", {
   "content-type": "application/json",
 });
-

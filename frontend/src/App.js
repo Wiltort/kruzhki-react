@@ -20,7 +20,8 @@ import {
   RecipeCreate,
   User,
   ChangePassword,
-  ScheduleEdit
+  ScheduleEdit,
+  MySchedule
 } from './pages'
 
 import { AuthContext, UserContext } from './contexts'
@@ -196,8 +197,8 @@ function App() {
           />
           <ProtectedRoute
             exact
-            path='/subscriptions'
-            component={Subscriptions}
+            path='/my-schedule'
+            component={MySchedule}
             loggedIn={loggedIn}
           />
 

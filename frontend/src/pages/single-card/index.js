@@ -28,6 +28,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
   const { id } = useParams();
   const history = useHistory();
 
+
   useEffect((_) => {
     api
       .getRecipe({
@@ -158,7 +159,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
                 <Button
                   className={styles["single-card__button"]}
                   modifier="style_light-blue"
-                  onClick={_ => {
+                  clickHandler={_ => {
                     api.createLessons({group_id: id})
                     .then(res => {history.push(`${url}/diary/`)})
                   }}

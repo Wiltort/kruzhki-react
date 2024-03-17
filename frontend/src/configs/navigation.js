@@ -12,6 +12,11 @@ export default [
     href: '/my-schedule',
     auth: true
   },{
+    title: 'Журнал',
+    href: '/diary',
+    auth: true
+  },
+  {
     title: 'Уведомления',
     href: '/notifications',
     auth: true
