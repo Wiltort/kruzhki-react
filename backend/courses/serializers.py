@@ -78,7 +78,6 @@ class AttendingSerializer(serializers.ModelSerializer):
 class LessonSerializer(serializers.ModelSerializer):
     attending = AttendingSerializer(many = True, read_only = True)
     stud_group = serializers.StringRelatedField()
-    ldate = serializers.
     class Meta:
         model = Lesson
         fields = ('id', 'ldate', 'topic', 'attending', 'stud_group')

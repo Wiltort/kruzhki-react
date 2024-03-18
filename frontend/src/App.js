@@ -21,13 +21,15 @@ import {
   User,
   ChangePassword,
   ScheduleEdit,
-  MySchedule
+  MySchedule,
+  Diary
 } from './pages'
 
 import { AuthContext, UserContext } from './contexts'
 
 function App() {
   const [ loggedIn, setLoggedIn ] = useState(null)
+  const [ isStaff, setIsStaff ] = useState(null)
   const [ user, setUser ] = useState({})
   const [ loading, setLoading ] = useState(false)
   const [ orders, setOrders ] = useState(0)
@@ -82,6 +84,7 @@ function App() {
           .then(res => {
             setUser(res)
             setLoggedIn(true)
+            setIsStaff(res.is_staff)
             getOrders()
           })
           .catch(err => {
@@ -154,6 +157,7 @@ function App() {
         .then(res => {
           setUser(res)
           setLoggedIn(true)
+          setIsStaff(res.is_staff)
           getOrders()
         })
         .catch(err => {
@@ -200,6 +204,13 @@ function App() {
             path='/my-schedule'
             component={MySchedule}
             loggedIn={loggedIn}
+          />
+          <ProtectedRoute
+            exact
+            path='/diary'
+            component={Diary}
+            loggedIn={loggedIn}
+            isStaff={isStaff}
           />
 
           <ProtectedRoute
