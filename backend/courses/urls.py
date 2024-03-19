@@ -1,7 +1,8 @@
 from django.urls import include, path
 from .views import (
     RubricViewSet, GroupViewSet, ScheduleViewSet, RingViewSet,
-    JoiningViewSet, MessageViewSet, LessonViewSet
+    JoiningViewSet, MessageViewSet, LessonViewSet, GroupListViewSet,
+    AttendingOfGroupViewSet
     )
 from rest_framework.routers import DefaultRouter
 
@@ -14,6 +15,8 @@ router.register('v1/rings', RingViewSet)
 router.register('v1/joinings', JoiningViewSet)
 router.register('v1/messages', MessageViewSet, basename='messages')
 router.register('v1/lessons', LessonViewSet)
+router.register('v1/my-groups', GroupListViewSet, basename='group-list')
+router.register('v1/attendings', AttendingOfGroupViewSet)
 
 
 urlpatterns = [
@@ -32,5 +35,4 @@ urlpatterns = [
         'v1/groups/<int:pk>/forming', 
          GroupViewSet.as_view(actions={'post': 'create_lessons'})
     ),
-    
 ]

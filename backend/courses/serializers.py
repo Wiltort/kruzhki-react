@@ -84,11 +84,11 @@ class LessonSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    attending = AttendingSerializer(many = True, read_only = True)
+    #attending = AttendingSerializer(many = True, read_only = True)
 
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'attending')
+        fields = ('id', 'first_name', 'last_name')
 
 
 class RubricSerializer(serializers.ModelSerializer):
@@ -248,6 +248,15 @@ class JoiningSerializer(serializers.ModelSerializer):
 class AttendingOfGroupSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many = True, read_only = True)
     lessons = LessonSerializer(many = True, read_only = True)
+   
     class Meta:
         model = Stud_Group
-        fields = ['id', 'name', 'title', 'teacher', 'students', 'image', 'begin_at']
+        fields = ['id', 'name', 'title', 'teacher', 'students', 'begin_at', 'lessons']
+
+class AttendingOfStudentSerializer(serializers.ModelSerializer):
+    lessons = LessonSerializer(many = True, read_only = True)
+    
+    class Meta:
+        model = Stud_Group
+        fields = ['id', 'name', 'title', 'teacher', 'begin_at', 'lessons']
+

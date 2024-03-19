@@ -25,7 +25,8 @@ from .serializers import (
     AddScheduleItemSerializer,
     LessonSerializer,
     AttendingOfGroupSerializer,
-    AttendingSerializer
+    AttendingSerializer,
+    AttendingOfStudentSerializer
     )
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly, 
@@ -295,30 +296,33 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 class AttendingOfGroupViewSet(
     mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = Stud_Group.objects.all()
-    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly,)
-    serializer_class = AttendingOfGroupSerializer
-
-
-class AttendingViewSet(viewsets.ModelViewSet):
-    queryset = Attending.objects.all()
-    permission_classes = (IsAuthenticated,)
-    serializer_class = AttendingSerializer
-
+    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly, IsAuthenticated)
+    
+    def get_serializer_class(self):
+        if self.request.user.is_staff:
+            return AttendingOfGroupSerializer
+        return AttendingOfStudentSerializer
+    
     def get_queryset(self):
         user = self.request.user
         if user.is_staff:
-            pk = self.request.kwargs.get('pk')
-            #Доделать
-        return super().get_queryset()
-    
+            return Stud_Group.objects.filter(teacher=user)
+        else:
+            return Stud_Group.objects.filter(students=user)
+
+   
 class GroupListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Stud_Group.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = ShortGroupSerializer
 
     def get_queryset(self):
-        #Ljltkfnm
-        return super().get_queryset()
+        user = self.request.user
+        if user.is_staff:
+            return Stud_Group.objects.filter(teacher=user)
+        else:
+            return Stud_Group.objects.filter(students=user)
+        

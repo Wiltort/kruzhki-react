@@ -406,6 +406,31 @@ class Api {
       },
     }).then(this.checkResponse);
   }
+
+  getGroups() {
+    const token = localStorage.getItem("token");
+    return fetch(`/api/v1/my-groups`, {
+      method: "GET",
+      headers: {
+        ...this._headers,
+        authorization: `Token ${token}`,
+      },
+    }).then(this.checkResponse);
+  }
+
+  getAttendings({ id }) {
+    const token = localStorage.getItem("token");
+    return fetch(`/api/v1/attendings/${ id? `${id}`:""}`, {
+      method: "GET",
+      headers: {
+        ...this._headers,
+        authorization: `Token ${token}`,
+      },
+    }).then(this.checkResponse);
+  }
+
+
+  
 }
 export default new Api(process.env.API_URL || "http://localhost", {
   "content-type": "application/json",
