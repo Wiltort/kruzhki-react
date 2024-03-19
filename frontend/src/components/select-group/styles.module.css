@@ -1,0 +1,13 @@
+
+. selecting {
+    width: 200px;
+    height: 30px;
+    background-color: #ccc;
+}
+. selected {
+    background-color: green;
+}
+. option-field {
+    margin: 20px;
+}
+

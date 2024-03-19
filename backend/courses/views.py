@@ -311,4 +311,14 @@ class AttendingViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_staff:
             pk = self.request.kwargs.get('pk')
+            #Доделать
+        return super().get_queryset()
+    
+class GroupListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Stud_Group.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ShortGroupSerializer
+
+    def get_queryset(self):
+        #Ljltkfnm
         return super().get_queryset()
