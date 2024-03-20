@@ -27,6 +27,7 @@ import FileInput from './file-input'
 import IngredientsSearch from './ingredients-search'
 import WeekTable from './weektable'
 import ScheduleForm from './form'
+import TeacherDiary from './teacher-diary'
 
 export {
   Header,
@@ -57,5 +58,6 @@ export {
   FileInput,
   IngredientsSearch,
   WeekTable,
-  ScheduleForm
+  ScheduleForm,
+  TeacherDiary
 }

@@ -11,7 +11,7 @@ import ScheduleEdit from './schedule-edit'
 import User from './user'
 import ChangePassword from './change-password'
 import MySchedule from './my-schedule'
-import Diary from './teacher-diary'
+import Diary from './diary'
 
 
 export {

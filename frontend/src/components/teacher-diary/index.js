@@ -1,84 +1,38 @@
-import React, { Component } from 'react';
+import styles from "./style.module.css";
 
+const TeacherDiary = ({ lessons, students }) => {
 
-{/*В этом примере мы используем компоненты для отображения группы 
-студентов, студентов и оценок, а также компонент таблицы для отображения оценок. 
-Вы можете добавить больше функционала,
-например, полосу прокрутки в таблицу, если количество уроков большое.*/}
-
-class GroupStudent extends Component {
-    render() {
-      const { students, group } = this.props;
-      return (
-        <div>
-          <h3>{group.name}</h3>
-          {students.map(student => (
-            <Student
-              key={student.id}
-              student={student}
-              group={group}
-              lesson={this.props.lesson}
-            />
-          ))}
-        </div>
-      );
-    }
-  }
-  
-  class Student extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        score: '',
-    };
-}
-
-handleChange = (event) => {
-this.setState({ score: event.target.value });
+  return (
+    <div className={styles.TeacherDiary}>
+      <table>
+        <thead>
+          <tr>
+            <th key="number">№</th>
+            <th key="name">Фамилия и имя</th>
+            {lessons.map((lesson) => (
+              <th key={lesson.id}>{lesson.topic}. lesson.ldate</th>
+            ))}
+          </tr>
+        </thead>
+        {students.map((student, index) => (
+          <tr>
+            <td key={index + 1}>{index + 1}</td>
+            <td key={student.id}>
+              {student.last_name} {student.first_name}
+            </td>
+            {lessons.map((lesson) => {
+              const Attending = lesson.attending.find(
+                (element) => element.student == student.id
+              );
+              <td key={Attending.id}>
+                {Attending.points}
+                {!Attending.is_present ? "Н" : ""}
+              </td>;
+            })}
+          </tr>
+        ))}
+      </table>
+    </div>
+  );
 };
-
-submitScore = (e) => {
-e.preventDefault();
-const { student, group, lesson, score } = this.state;
-// Здесь отправляем оценку на сервер
-alert(`Оценка ${student.name} за урок ${lesson.title} успешно добавлена`);
-};
-
-render() {
-return (
-<form onSubmit={this.submitScore}>
-<div>
-<label>Оценка:</label>
-<input
-type="text"
-value={this.state.score}
-onChange={this.handleChange}
-/>
-</div>
-</form>
-);
-}
-}
-
-function Table(props) {
-const { lessons, groups, students } = props;
-return (
-<table>
-<thead>
-<tr>
-{lessons.map((lesson, index) => (
-<th key={index}>{lesson.title}</th>
-))}
-</tr>
-</thead>
-{groups.map((group, index) => (
-<GroupStudent
-key={index}
-lesson={lessons}
-group={group}
-students={students}
-/>
-))}
-</table>
-);
-}
+export default TeacherDiary;
