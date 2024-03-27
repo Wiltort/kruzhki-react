@@ -12,6 +12,8 @@ import User from './user'
 import ChangePassword from './change-password'
 import MySchedule from './my-schedule'
 import Diary from './diary'
+import SendMessage from './send-message'
+import NotificationsPage from './subscriptions'
 
 
 export {
@@ -28,5 +30,7 @@ export {
   ChangePassword,
   ScheduleEdit,
   MySchedule,
-  Diary
+  Diary,
+  SendMessage,
+  NotificationsPage
 }

@@ -24,7 +24,7 @@ class CurrentUserSerializer(UserSerializer):
                         'messages_number': {'read_only': True}}
 
     def get_messages_number(self, obj):
-        user = self.context.get('request').user
+        user = self.context["request"].user
         if not user.is_anonymous:
             if user.is_staff:
                 return Message.objects.filter(to=user).count()+Joining.objects.filter(group__teacher=user).count()

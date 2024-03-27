@@ -22,7 +22,9 @@ import {
   ChangePassword,
   ScheduleEdit,
   MySchedule,
-  Diary
+  Diary,
+  SendMessage,
+  NotificationsPage
 } from './pages'
 
 import { AuthContext, UserContext } from './contexts'
@@ -194,6 +196,13 @@ function App() {
           />
           <ProtectedRoute
             exact
+            path='/user/:id/sendmessage'
+            component={SendMessage}
+            loggedIn={loggedIn}
+            updateOrders={updateOrders}
+          />
+          <ProtectedRoute
+            exact
             path='/groups/:id/schedule'
             component={ScheduleEdit}
             orders={orders}
@@ -211,6 +220,14 @@ function App() {
             component={Diary}
             loggedIn={loggedIn}
             isStaff={isStaff}
+          />
+          <ProtectedRoute
+            exact
+            path='/notifications'
+            component={NotificationsPage}
+            loggedIn={loggedIn}
+            isStaff={isStaff}
+            updateOrders={updateOrders}
           />
 
           <ProtectedRoute

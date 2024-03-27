@@ -78,6 +78,7 @@ class AttendingSerializer(serializers.ModelSerializer):
 class LessonSerializer(serializers.ModelSerializer):
     attending = AttendingSerializer(many = True, read_only = True)
     stud_group = serializers.StringRelatedField()
+    ldate = serializers.DateTimeField(format="%d.%m")
     class Meta:
         model = Lesson
         fields = ('id', 'ldate', 'topic', 'attending', 'stud_group')
@@ -173,9 +174,6 @@ class AddStud_GroupSerializer(serializers.ModelSerializer):
             'begin_at'
         )
     
-    def to_representation(self, instance):
-        serializer = Stud_GroupSerializer(instance)
-        return serializer.data
     
     @transaction.atomic
     def create(self, validated_data):
@@ -226,23 +224,21 @@ class AddMessageSerializer(serializers.ModelSerializer):
     
 class GetMessageSerializer(serializers.ModelSerializer):
     sender = CurrentUserSerializer()
-    
+    date = serializers.DateTimeField(format='%d.%m.%Y %H:%M:%S')
     class Meta:
         model = Message
         fields = ('sender', 'topic', 'text', 'date')
 
 
 class JoiningSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.filter(is_staff=False)
-    )
-    group = serializers.PrimaryKeyRelatedField(
-        queryset=Stud_Group.objects.all()
-    )
+    user = CurrentUserSerializer()
+    group = ShortGroupSerializer()
+    date = serializers.DateTimeField(format='%d.%m.%Y %H:%M:%S')
+
     
     class Meta:
         model = Joining
-        fields = ('user', 'group', 'date')
+        fields = ('id', 'user', 'group', 'date')
 
 
 class AttendingOfGroupSerializer(serializers.ModelSerializer):
@@ -255,6 +251,7 @@ class AttendingOfGroupSerializer(serializers.ModelSerializer):
 
 class AttendingOfStudentSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many = True, read_only = True)
+    teacher = serializers.StringRelatedField(source='teacher.get_full_name')
     
     class Meta:
         model = Stud_Group

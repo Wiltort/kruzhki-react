@@ -2,7 +2,7 @@ from django.urls import include, path
 from .views import (
     RubricViewSet, GroupViewSet, ScheduleViewSet, RingViewSet,
     JoiningViewSet, MessageViewSet, LessonViewSet, GroupListViewSet,
-    AttendingOfGroupViewSet
+    AttendingOfGroupViewSet, AttendingViewSet
     )
 from rest_framework.routers import DefaultRouter
 
@@ -16,7 +16,8 @@ router.register('v1/joinings', JoiningViewSet)
 router.register('v1/messages', MessageViewSet, basename='messages')
 router.register('v1/lessons', LessonViewSet)
 router.register('v1/my-groups', GroupListViewSet, basename='group-list')
-router.register('v1/attendings', AttendingOfGroupViewSet)
+router.register('v1/my-attendings', AttendingOfGroupViewSet)
+router.register('v1/attendings', AttendingViewSet)
 
 
 urlpatterns = [

@@ -30,7 +30,7 @@ const Card = ({
         <LinkComponent
           className={styles.card__title}
           href={`/groups/${id}`}
-          title={title}
+          title={`${title} ${name}`}
         />
 
         <TagsContainer tags={rubric} />

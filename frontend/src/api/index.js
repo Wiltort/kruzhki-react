@@ -212,6 +212,28 @@ class Api {
     }).then(this.checkResponse);
   }
 
+  acceptJoining({ id }) {
+    const token = localStorage.getItem("token");
+    return fetch(`/api/v1/joinings/${id}/accept/`, {
+      method: "DELETE",
+      headers: {
+        ...this._headers,
+        authorization: `Token ${token}`,
+      },
+    }).then(this.checkResponse);
+  }
+
+  rejectJoining({ id }) {
+    const token = localStorage.getItem("token");
+    return fetch(`/api/v1/joinings/${id}/reject/`, {
+      method: "DELETE",
+      headers: {
+        ...this._headers,
+        authorization: `Token ${token}`,
+      },
+    }).then(this.checkResponse);
+  }
+
   removeFromJoinings({ id }) {
     const token = localStorage.getItem("token");
     return fetch(`/api/v1/groups/${id}/join/`, {
@@ -247,10 +269,24 @@ class Api {
 
   // subscriptions
 
-  getSubscriptions({ page, limit = 6, recipes_limit = 3 }) {
+  getMessages({ page, limit = 6}) {
     const token = localStorage.getItem("token");
     return fetch(
-      `/api/users/subscriptions/?page=${page}&limit=${limit}&recipes_limit=${recipes_limit}`,
+      `/api/v1/messages/?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          ...this._headers,
+          authorization: `Token ${token}`,
+        },
+      }
+    ).then(this.checkResponse);
+  }
+
+  getJoinings() {
+    const token = localStorage.getItem("token");
+    return fetch(
+      `/api/v1/joinings/`,
       {
         method: "GET",
         headers: {
@@ -272,14 +308,24 @@ class Api {
     }).then(this.checkResponse);
   }
 
-  subscribe({ author_id }) {
+  sendMessage({
+    user_id,
+    topic,
+    text
+  }) {
     const token = localStorage.getItem("token");
-    return fetch(`/api/users/${author_id}/subscribe/`, {
+    return fetch(`/api/v1/messages/`, {
       method: "POST",
       headers: {
         ...this._headers,
         authorization: `Token ${token}`,
       },
+      body: JSON.stringify({
+        to: user_id,
+        topic: topic,
+        text: text,
+      }),
+
     }).then(this.checkResponse);
   }
 
@@ -420,7 +466,7 @@ class Api {
 
   getAttendings({ id }) {
     const token = localStorage.getItem("token");
-    return fetch(`/api/v1/attendings/${ id? `${id}`:""}`, {
+    return fetch(`/api/v1/my-attendings/${ id? `${id}`:""}`, {
       method: "GET",
       headers: {
         ...this._headers,
@@ -429,7 +475,27 @@ class Api {
     }).then(this.checkResponse);
   }
 
-
+  updateAttending(
+    {
+      id,
+      points,
+      is_present = true
+    }
+  ) {
+    // image was changed
+    const token = localStorage.getItem("token");
+    return fetch(`/api/v1/attendings/${id}/`, {
+      method: "PATCH",
+      headers: {
+        ...this._headers,
+        authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({
+        points: points,
+        is_present: is_present,
+      }),
+    }).then(this.checkResponse);
+  }
   
 }
 export default new Api(process.env.API_URL || "http://localhost", {

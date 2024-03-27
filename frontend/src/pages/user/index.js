@@ -13,7 +13,7 @@ import styles from './styles.module.css'
 import { useRecipes } from '../../utils/index.js'
 import { useEffect, useState, useContext } from 'react'
 import api from '../../api'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory, useRouteMatch } from 'react-router-dom'
 import { UserContext } from '../../contexts'
 import MetaTags from 'react-meta-tags'
 
@@ -36,6 +36,7 @@ const UserPage = ({ updateOrders }) => {
   const [ subscribed, setSubscribed ] = useState(false)
   const history = useHistory()
   const userContext = useContext(UserContext)
+  const { url } = useRouteMatch();
 
   const getRecipesTeacher = ({ page = 1, tags }) => {
     api
@@ -113,15 +114,8 @@ const UserPage = ({ updateOrders }) => {
       </div>
       {(userContext || {}).id !== (user || {}).id && <Button
         className={styles.buttonSubscribe}
-        clickHandler={_ => {
-          const method = subscribed ? api.deleteSubscriptions.bind(api) : api.subscribe.bind(api) 
-            method({
-              author_id: id
-            })
-            .then(_ => {
-              setSubscribed(!subscribed)
-            })
-        }}
+        modifier='style_light-blue'
+        href={`${url}/sendmessage`}
       >
         Написать сообщение пользователю
       </Button>}

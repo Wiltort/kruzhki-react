@@ -1,0 +1,19 @@
+.teacherdiary {
+  margin-bottom: 52px;
+  max-width: 1000px;
+  overflow-x: auto; 
+}
+.tablediary {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 10px;
+}
+.tablehead {
+  font-Size: 0.9em;
+  align-items: first baseline;
+}
+.tablebody { 
+  font-Size: 0.9em;
+  border: 1px solid black;
+  border-collapse: collapse;
+}

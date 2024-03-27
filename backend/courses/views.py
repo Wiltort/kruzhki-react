@@ -46,6 +46,7 @@ from .filters import RubricFilter, ScheduleFilter, JoiningFilter
 from rest_framework.decorators import action
 from rest_framework.validators import ValidationError
 from rest_framework.response import Response
+from django.db.transaction import atomic
 
 
 
@@ -225,20 +226,18 @@ class JoiningViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super(JoiningViewSet, self).get_queryset()
         userId = self.request.user.id
-        queryset = queryset.objects.filter(group__teacher__id=userId)
+        queryset = queryset.filter(group__teacher__id=userId)
         return queryset
     
     @action(
         detail=True,
         methods=('delete',),
-        permission_classes=(IsAdminOrTeacher)
+        permission_classes=(IsAdminOrTeacher,)
         )
     def accept(self, request, pk=None):
         joining = get_object_or_404(Joining, pk=pk)
         student = joining.user
         group = joining.group
-        if student in group.students.all():
-            raise ValidationError('Уже в группе!')
         if request.user != group.teacher:
             raise ValidationError('Это не ваша группа!')
         Message.objects.create(
@@ -250,12 +249,12 @@ class JoiningViewSet(viewsets.ModelViewSet):
                 f'{request.user.first_name} {request.user.last_name}.'
         )
         group.students.add(student)
-        joining.objects.delete()
+        joining.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     @action(
         detail=True,
         methods=('delete',),
-        permission_classes=(IsAdminOrTeacher)
+        permission_classes=(IsAdminOrTeacher,)
         )
     def reject(self, request, pk=None):
         joining = get_object_or_404(Joining, pk=pk)
@@ -273,15 +272,16 @@ class JoiningViewSet(viewsets.ModelViewSet):
                 f' принять Вас в группу {group.name} - "{group.title}".\nС уважением, '\
                 f'{request.user.first_name} {request.user.last_name}.'
         )
-        joining.objects.delete()
+        joining.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
+    pagination_class = CustomPagination
     
     def get_queryset(self):
-        queryset = Message.objects.filter(to=self.request.user)
+        queryset = Message.objects.filter(to=self.request.user).order_by('-date')
         return queryset
     
     def get_serializer_class(self):
@@ -313,6 +313,16 @@ class AttendingOfGroupViewSet(
             return Stud_Group.objects.filter(teacher=user)
         else:
             return Stud_Group.objects.filter(students=user)
+        
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.user.is_staff:
+            students=instance.students
+            lessons=instance.lessons
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+    
+    
 
    
 class GroupListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -325,4 +335,19 @@ class GroupListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             return Stud_Group.objects.filter(teacher=user)
         else:
             return Stud_Group.objects.filter(students=user)
-        
+
+
+class AttendingViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    queryset = Attending.objects.all()
+    permission_classes = (IsAdminOrAllowedTeacherOrReadOnly, IsAuthenticated)
+    serializer_class = AttendingSerializer
+
+    @atomic
+    def partial_update(self, request, pk):
+        att = get_object_or_404(self.queryset, pk=pk)
+        self.check_object_permissions(request=request, obj=att.lesson.stud_group)
+        serializer = self.serializer_class(att, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
