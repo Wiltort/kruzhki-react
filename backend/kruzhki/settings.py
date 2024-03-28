@@ -191,3 +191,9 @@ DJOSER = {
 }
 
 DEFAULT_LESSON_DURATION = 45
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost',
+]
